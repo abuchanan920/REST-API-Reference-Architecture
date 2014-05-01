@@ -1,0 +1,60 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+apply plugin: 'fatjar'
+apply plugin: 'jacoco'
+apply plugin: 'sonar-runner'
+apply plugin: 'project-report'
+apply plugin: 'docker'
+
+version = "1.0-SNAPSHOT"
+archivesBaseName = "rest-reference"
+mainClassName = "com.hibu.restreference.RestReferenceApplication"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'se.transmode.gradle:gradle-docker:1.0'
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'    
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile "junit:junit:4.11"
+    compile "io.dropwizard:dropwizard-core:0.7.0"
+}
+
+fatJar {
+	manifest {
+        attributes 'Main-Class': mainClassName, "Implementation-Title": "Rest Reference Application", "Implementation-Version": version
+    }
+    
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+}
+
+
+
+sonarRunner {
+    sonarProperties {
+        property "sonar.host.url", "http://localhost:9000/"
+        property "sonar.jdbc.url", "jdbc:h2:tcp://localhost:9092/sonar"
+        //property "sonar.jdbc.driverClassName", "com.mysql.jdbc.Driver"
+        property "sonar.jdbc.username", "sonar"
+        property "sonar.jdbc.password", "sonar"
+    }
+}
+
+docker {
+    baseImage "ubuntu"
+    maintainer 'Andrew W. Buchanan "andrew.buchanan@hibu.com"'
+}
+
+distDocker {
+    exposePort 443
+}
