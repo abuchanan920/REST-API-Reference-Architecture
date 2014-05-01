@@ -4,7 +4,17 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * A sample domain object.
+ * 
+ * Demonstrates using UUID's as the primary ID. 
+ * This can be useful in a distributed system to avoid the need for a centralized id issuing system (database or otherwise).
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 public class SampleObjectBean {
+	
 	private UUID id;
 	private long value;
 	private String message;

@@ -6,7 +6,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.dropwizard.Configuration;
 
+/**
+ * This demonstrates how to wire up a config setting. You could store database connection info here for example.
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 public class SampleConfiguration extends Configuration {
+
 	@NotEmpty
 	private String sampleConfigSetting;
 
@@ -16,8 +23,8 @@ public class SampleConfiguration extends Configuration {
 	}
 
 	@JsonProperty
-	public void setSampleConfigSetting(String databaseServer) {
-		this.sampleConfigSetting = databaseServer;
+	public void setSampleConfigSetting(String setting) {
+		this.sampleConfigSetting = setting;
 	}
 	
 }

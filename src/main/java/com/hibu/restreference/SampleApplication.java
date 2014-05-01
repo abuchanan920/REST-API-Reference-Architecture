@@ -9,8 +9,16 @@ import com.hibu.restreference.repository.SampleRepository;
 import com.hibu.restreference.repository.memory.MemorySampleRepository;
 import com.hibu.restreference.resources.SampleResource;
 
+/**
+ * Main Application class
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 public class SampleApplication extends Application<SampleConfiguration> {
-	private final SampleRepository repository = new MemorySampleRepository(); // should use your dependency injection framework of choice here
+	// NOTE: Should use your dependency injection framework of choice here
+	private final SampleRepository repository = new MemorySampleRepository(); 
+
 
 	public static void main(String[] args) throws Exception {
         new SampleApplication().run(args);
@@ -23,18 +31,19 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	
 	@Override
 	public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void run(SampleConfiguration configuration,
 			Environment environment) throws Exception {
-		final SampleResource websiteResource = new SampleResource(repository);
-		environment.jersey().register(websiteResource);
+		// Wire up the SampleResource
+		final SampleResource sampleResource = new SampleResource(repository);
+		environment.jersey().register(sampleResource);
 		
+		// Wire up the SampleRepository health check
 		final SampleObjectPoolHealthCheck websitePoolHealthCheck = new SampleObjectPoolHealthCheck(repository);
-		environment.healthChecks().register("website-pool", websitePoolHealthCheck);
+		environment.healthChecks().register("sampleobject-pool", websitePoolHealthCheck);
 	}
 
 }

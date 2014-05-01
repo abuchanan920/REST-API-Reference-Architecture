@@ -21,6 +21,12 @@ import com.hibu.restreference.core.SampleObjectBean;
 import com.hibu.restreference.repository.SampleRepository;
 import com.hibu.restreference.repository.SampleRepositoryException;
 
+/**
+ * Demonstrates mapping of URLs to application logic
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 @Path("resources")
 @Produces(MediaType.APPLICATION_JSON)
 public class SampleResource {

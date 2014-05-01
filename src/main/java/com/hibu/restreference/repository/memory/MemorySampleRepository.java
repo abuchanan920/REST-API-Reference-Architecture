@@ -10,7 +10,14 @@ import com.hibu.restreference.core.SampleObjectBean;
 import com.hibu.restreference.repository.SampleRepository;
 import com.hibu.restreference.repository.SampleRepositoryException;
 
+/**
+ * A simple implementation of SampleRepository for demonstration purposes.
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 public class MemorySampleRepository implements SampleRepository {
+	
 	private final Map<UUID,SampleObjectBean> objects = new HashMap<>();
 
 	@Override

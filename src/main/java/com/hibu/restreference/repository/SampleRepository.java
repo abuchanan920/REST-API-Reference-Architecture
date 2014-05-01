@@ -5,8 +5,17 @@ import java.util.UUID;
 
 import com.hibu.restreference.core.SampleObjectBean;
 
-
+/**
+ * A repository interface pattern is useful to allow various implementations to be swapped in for testing, etc.
+ * 
+ * The methods here should be for the various high level operations an application would want to perform.
+ * A specialized exception is defined for the interface to wrap any exceptions thrown by the underlying implementations.
+ * 
+ * @author andrew.buchanan@hibu.com
+ *
+ */
 public interface SampleRepository {
+
 	public UUID addSampleObject(SampleObjectBean sampleObject) throws SampleRepositoryException;
 	
 	public List<SampleObjectBean> getAllSampleObjects() throws SampleRepositoryException;
