@@ -9,7 +9,7 @@ apply plugin: 'docker'
 
 version = "1.0-SNAPSHOT"
 archivesBaseName = "rest-reference"
-mainClassName = "com.hibu.restreference.RestReferenceApplication"
+mainClassName = "com.hibu.restreference.SampleApplication"
 
 buildscript {
     repositories {
