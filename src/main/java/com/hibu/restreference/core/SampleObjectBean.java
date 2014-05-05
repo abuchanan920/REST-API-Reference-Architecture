@@ -3,6 +3,8 @@ package com.hibu.restreference.core;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * A sample domain object.
@@ -13,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author andrew.buchanan@hibu.com
  *
  */
+@ApiModel(value = "This is a sample object with a few fields")
 public class SampleObjectBean {
 	
 	private UUID id;
@@ -27,6 +30,7 @@ public class SampleObjectBean {
 		this.message = message;
 	}
 
+	@ApiModelProperty(value = "The object ID")
 	@JsonProperty
 	public void setId(UUID id) {
 		this.id = id;
@@ -37,11 +41,13 @@ public class SampleObjectBean {
 		return id;
 	}
 
+	@ApiModelProperty(value = "A sample numeric value", required=true)
 	@JsonProperty
 	public long getValue() {
 		return value;
 	}
 
+	@ApiModelProperty(value = "A message to go along with the object", required = false)
 	@JsonProperty
 	public String getMessage() {
 		return message;
