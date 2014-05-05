@@ -28,6 +28,8 @@ repositories {
 dependencies {
     testCompile "junit:junit:4.11"
     compile "io.dropwizard:dropwizard-core:0.7.0"
+    compile "io.dropwizard:dropwizard-assets:0.7.0"
+    compile "com.wordnik:swagger-jaxrs_2.10:1.3.4"
 }
 
 fatJar {

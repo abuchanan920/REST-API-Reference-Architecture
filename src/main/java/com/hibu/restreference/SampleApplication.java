@@ -8,6 +8,7 @@ import com.hibu.restreference.health.SampleObjectPoolHealthCheck;
 import com.hibu.restreference.repository.SampleRepository;
 import com.hibu.restreference.repository.memory.MemorySampleRepository;
 import com.hibu.restreference.resources.SampleResource;
+import com.hibu.swagger.SwaggerBundle;
 
 /**
  * Main Application class
@@ -16,6 +17,8 @@ import com.hibu.restreference.resources.SampleResource;
  *
  */
 public class SampleApplication extends Application<SampleConfiguration> {
+	public static final String API_VERSION = "1.0.0";
+	
 	// NOTE: Should use your dependency injection framework of choice here
 	private final SampleRepository repository = new MemorySampleRepository(); 
 
@@ -31,7 +34,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	
 	@Override
 	public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
-		
+		bootstrap.addBundle(new SwaggerBundle(API_VERSION));		
 	}
 
 	@Override
@@ -44,6 +47,9 @@ public class SampleApplication extends Application<SampleConfiguration> {
 		// Wire up the SampleRepository health check
 		final SampleObjectPoolHealthCheck websitePoolHealthCheck = new SampleObjectPoolHealthCheck(repository);
 		environment.healthChecks().register("sampleobject-pool", websitePoolHealthCheck);
+		
+		// Configure Swagger
+
 	}
 
 }
