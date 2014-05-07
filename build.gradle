@@ -68,6 +68,11 @@ fatJar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
+task start(type:Exec,dependsOn:'fatJar') {
+	description 'Compiles and runs the server'
+	commandLine 'java'
+	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/main/resources/sample-config.yml'
+}
 
 // Builds docker config Dockerfile. On Linux it will also generate the final docker image.
 distDocker {
