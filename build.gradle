@@ -17,7 +17,7 @@ buildscript {
     }
     dependencies {
         classpath 'se.transmode.gradle:gradle-docker:1.0'
-        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'    
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'    
     }
 }
 
