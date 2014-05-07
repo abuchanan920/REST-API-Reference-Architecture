@@ -1,36 +1,36 @@
-# Synopsis
+#Synopsis
 
 A small POC application demonstrating the integration of a number of technologies into a REST API server.
 
-## Build Tools
+##Build Tools
 
-	* [Gradle](http://www.gradle.org/) - a modern build too that is easier to extend than ant and more flexible than maven.
-	* [JaCoCo](http://www.eclemma.org/jacoco/) - a modern unit test code coverage tool
-	* [Sonar](http://www.sonarqube.org/) - provides nice reports on code quality and static code analysis
+* [Gradle](http://www.gradle.org/) - a modern build too that is easier to extend than ant and more flexible than maven.
+* [JaCoCo](http://www.eclemma.org/jacoco/) - a modern unit test code coverage tool
+* [Sonar](http://www.sonarqube.org/) - provides nice reports on code quality and static code analysis
 
 ## Core
 
-	* [Jersey](https://jersey.java.net/) - the reference implementation of JAX-RS (i.e. REST web services)
-	* [Jetty](http://www.eclipse.org/jetty/) - an embeddable servlet container. Allows app to be self serving.
-	* [Dropwizard](https://dropwizard.github.io/dropwizard/) - integrates Jersey, Jetty, Metrics, and other useful tools.
+* [Jersey](https://jersey.java.net/) - the reference implementation of JAX-RS (i.e. REST web services)
+* [Jetty](http://www.eclipse.org/jetty/) - an embeddable servlet container. Allows app to be self serving.
+* [Dropwizard](https://dropwizard.github.io/dropwizard/) - integrates Jersey, Jetty, Metrics, and other useful tools.
 
 ## Operations
 
-	* [Metrics](http://metrics.codahale.com/) - provides easy to generate statistics on API performance and usage.
+* [Metrics](http://metrics.codahale.com/) - provides easy to generate statistics on API performance and usage.
 
 ## Documentation
 
-	* [Swagger](https://helloreverb.com/developers/swagger) - provides a method of generating API documentation with a web based UI front end.
+* [Swagger](https://helloreverb.com/developers/swagger) - provides a method of generating API documentation with a web based UI front end.
 
 ## Deployment
 
-	* [Docker](https://www.docker.io/) - the emerging standard for lightweight virtualization
+* [Docker](https://www.docker.io/) - the emerging standard for lightweight virtualization
 
 # Installation
 
 ## Requirements
 
-User must have Java (7+) installed as well as Gradle.
+User must have Java (7+) installed as well as [Gradle](http://www.gradle.org/).
 
 On a Mac, you can most easily install gradle using [brew](http://brew.sh/): `brew install gradle`
 
@@ -41,10 +41,15 @@ On a Mac, you can most easily install gradle using [brew](http://brew.sh/): `bre
 You can run it manually with `java -jar build/libs/rest-reference-1.0-SNAPSHOT.jar server src/main/resources/sample-config.yml`
 after compiling with `gradle fatJar` if you prefer.
 
-The API will be available at http://localhost:8080
-The API docs will be available at http://localhost:8080/docs/
-A computer consumable version of the docs are at http://localhost:8080/api-docs
-A console with access to the performance metrics, health checks, and thread dumps is at http://localhost:8081
+The API endpoint will be available at [http://localhost:8080](http://localhost:8080).
+
+A console with access to the performance metrics, health checks, and thread dumps is at [http://localhost:8081](http://localhost:8081).
+
+The API docs will be available at [http://localhost:8080/docs/](http://localhost:8080/docs/).
+
+A computer consumable version of the docs are at [http://localhost:8080/api-docs](http://localhost:8080/api-docs).
+
+
 
 ## Extended docs
 
