@@ -1,16 +1,21 @@
 apply plugin: 'java'
 apply plugin: 'application'
-apply plugin: 'eclipse'
-apply plugin: 'fatjar'
-apply plugin: 'jacoco'
-apply plugin: 'sonar-runner'
-apply plugin: 'project-report'
-apply plugin: 'docker'
+apply plugin: 'eclipse'        // Allows generation of Eclipse project files
+apply plugin: 'fatjar'         // Packages application in single jar with all dependencies included
+apply plugin: 'jacoco'         // Unit test coverage report
+apply plugin: 'sonar-runner'   // Integration with Sonar for code metrics 
+apply plugin: 'project-report' // Report on project dependencies, etc.
+apply plugin: 'docker'         // Allows generation of a docker image from the project
 
 version = "1.0-SNAPSHOT"
 archivesBaseName = "rest-reference"
+description = "Rest Reference Application"
 mainClassName = "com.hibu.restreference.SampleApplication"
 
+ext.dockerBaseImage = "ubuntu"
+ext.dockerMaintainer = 'Full User Name "user.name@hibu.com"'
+
+// Dependencies for the build script itself
 buildscript {
     repositories {
         mavenCentral()
@@ -21,6 +26,8 @@ buildscript {
     }
 }
 
+
+// Dependencies for your application
 repositories {
     mavenCentral()
 }
@@ -32,16 +39,16 @@ dependencies {
     compile "com.wordnik:swagger-jaxrs_2.10:1.3.4"
 }
 
-fatJar {
-	manifest {
-        attributes 'Main-Class': mainClassName, "Implementation-Title": "Rest Reference Application", "Implementation-Version": version
-    }
-    
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+// Configure docker settings
+docker {
+    baseImage dockerBaseImage
+    maintainer dockerMaintainer
 }
 
+// TASKS
 
-
+// Run sonar code metrics tool against code base. Note that you will likely need to adapt this to your environment.
+//tasks.sonarRunner.dependsOn(jacocoTestReport) // uncomment if you want to force coverage report data to be generated before running sonar
 sonarRunner {
     sonarProperties {
         property "sonar.host.url", "http://localhost:9000/"
@@ -52,11 +59,17 @@ sonarRunner {
     }
 }
 
-docker {
-    baseImage "ubuntu"
-    maintainer 'Andrew W. Buchanan "andrew.buchanan@hibu.com"'
+// Generate a single jar containing app and all dependencies
+fatJar {
+	manifest {
+        attributes 'Main-Class': mainClassName, "Implementation-Title": description, "Implementation-Version": version
+    }
+    
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
 }
 
+
+// Builds docker config Dockerfile. On Linux it will also generate the final docker image.
 distDocker {
     exposePort 443
 }
