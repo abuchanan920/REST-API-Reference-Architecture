@@ -30,6 +30,10 @@ buildscript {
     }
 }
 
+// temporarily force jacoco plugin to use a later version of jacoco to work with Java 8. Once the plugin is updated, this should be removed.
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+}
 
 // Dependencies for your application
 repositories {
