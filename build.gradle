@@ -12,6 +12,9 @@ archivesBaseName = "rest-reference"
 description = "Rest Reference Application"
 mainClassName = "com.hibu.restreference.SampleApplication"
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 ext.dockerBaseImage = "ubuntu"
 ext.dockerMaintainer = 'Full User Name "user.name@hibu.com"'
 
