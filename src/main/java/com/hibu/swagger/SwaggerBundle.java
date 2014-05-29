@@ -47,9 +47,11 @@ public class SwaggerBundle extends AssetsBundle {
 	    // Set the swagger config options
 	    SwaggerConfig config = ConfigFactory.config();
 	    config.setApiVersion(apiVersion);
-	    config.setBasePath(basePath);
-	    
-
+	  }
+	  
+	  public void configureBasePath(String basePath) {
+		    SwaggerConfig config = ConfigFactory.config();
+		    config.setBasePath(basePath);
 	  }
 
 	private void configureUUIDConverter() {

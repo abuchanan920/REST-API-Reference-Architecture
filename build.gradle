@@ -11,6 +11,10 @@ version = "1.0-SNAPSHOT"
 archivesBaseName = "rest-reference"
 description = "Rest Reference Application"
 mainClassName = "com.hibu.restreference.SampleApplication"
+dockerTag = "hibu/rest-reference"
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
 
 ext.dockerBaseImage = "ubuntu"
 ext.dockerMaintainer = 'Full User Name "user.name@hibu.com"'
@@ -21,7 +25,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'se.transmode.gradle:gradle-docker:1.0'
+        classpath 'se.transmode.gradle:gradle-docker:1.1'
         classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'    
     }
 }
@@ -71,10 +75,41 @@ fatJar {
 task start(type:Exec,dependsOn:'fatJar') {
 	description 'Compiles and runs the server'
 	commandLine 'java'
-	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/main/resources/sample-config.yml'
+	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/main/dist/sample-config.yml'
 }
 
 // Builds docker config Dockerfile. On Linux it will also generate the final docker image.
 distDocker {
-    exposePort 443
+    exposePort 8080
+    exposePort 8081
 }
+
+task startCoreOS(type:Exec) {
+	description 'Starts the CoreOS Server'
+	workingDir 'coreos'
+	commandLine 'vagrant'
+	args 'up'
+}
+
+task stopCoreOS(type:Exec) {
+	description 'Stops the CoreOS Server'
+	workingDir 'coreos'
+	commandLine 'vagrant'
+	args 'halt'
+}
+
+task deployDocker(type:Exec,dependsOn:['distDocker','startCoreOS']) {
+	description 'Generates the Docker image on the CoreOS server'
+	workingDir 'build/docker'
+	commandLine 'docker'
+	args 'build', '-t', dockerTag, '.'
+}
+
+task startDocker(type:Exec,dependsOn:'startCoreOS') {
+	description 'Starts the docker container'
+	workingDir 'build/docker'
+	commandLine 'docker'
+	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/docker-config.yml'
+}
+
+
