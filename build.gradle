@@ -11,12 +11,11 @@ version = "1.0-SNAPSHOT"
 archivesBaseName = "rest-reference"
 description = "Rest Reference Application"
 mainClassName = "com.hibu.restreference.SampleApplication"
-dockerTag = "hibu/rest-reference"
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
-ext.dockerBaseImage = "ubuntu"
+ext.dockerTag = "hibu/rest-reference"
 ext.dockerMaintainer = 'Full User Name "user.name@hibu.com"'
 
 // Dependencies for the build script itself
@@ -49,9 +48,9 @@ dependencies {
 
 // Configure docker settings
 docker {
-    baseImage dockerBaseImage
     maintainer dockerMaintainer
 }
+
 
 // TASKS
 
