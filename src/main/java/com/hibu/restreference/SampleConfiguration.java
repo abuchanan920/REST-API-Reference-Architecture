@@ -16,6 +16,8 @@ public class SampleConfiguration extends Configuration {
 
 	@NotEmpty
 	private String sampleConfigSetting;
+	
+	private String swaggerBasePath;
 
 	@JsonProperty
 	public String getSampleConfigSetting() {
@@ -25,6 +27,16 @@ public class SampleConfiguration extends Configuration {
 	@JsonProperty
 	public void setSampleConfigSetting(String setting) {
 		this.sampleConfigSetting = setting;
+	}
+	
+	@JsonProperty
+	public String getSwaggerBasePath() {
+		return swaggerBasePath;
+	}
+	
+	@JsonProperty
+	public void setSwaggerBasePath(String setting) {
+		this.swaggerBasePath = setting;
 	}
 	
 }

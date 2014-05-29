@@ -21,6 +21,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	
 	// NOTE: Should use your dependency injection framework of choice here
 	private final SampleRepository repository = new MemorySampleRepository(); 
+	
+	SwaggerBundle swaggerBundle = new SwaggerBundle(API_VERSION);
 
 
 	public static void main(String[] args) throws Exception {
@@ -34,7 +36,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	
 	@Override
 	public void initialize(Bootstrap<SampleConfiguration> bootstrap) {
-		bootstrap.addBundle(new SwaggerBundle(API_VERSION));		
+		// Configure Swagger
+		bootstrap.addBundle(swaggerBundle);
 	}
 
 	@Override
@@ -48,7 +51,8 @@ public class SampleApplication extends Application<SampleConfiguration> {
 		final SampleObjectPoolHealthCheck websitePoolHealthCheck = new SampleObjectPoolHealthCheck(repository);
 		environment.healthChecks().register("sampleobject-pool", websitePoolHealthCheck);
 		
-		// Configure Swagger
+		// Configure swagger
+		swaggerBundle.configureBasePath(configuration.getSwaggerBasePath());
 
 	}
 
