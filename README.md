@@ -76,7 +76,7 @@ You can install from [http://www.vagrantup.com/](http://www.vagrantup.com/), or 
 
 `gradle deployDocker` will compile the code, start a CoreOS virtual machine, create and deploy a Docker image of the application.
 
-`gradle startDocker` will start a new container based on hte deployed Docker image on the CoreOS virtual machine.
+`gradle startDocker` will start a new container based on the deployed Docker image on the CoreOS virtual machine.
 
 The API endpoint will be available at [http://172.17.8.101:8080](http://172.17.8.101:8080).
 
