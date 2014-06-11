@@ -26,6 +26,7 @@ A small POC application demonstrating the integration of a number of technologie
 
 * [Docker](https://www.docker.io/) - the emerging standard for lightweight virtualization
 * [CoreOS](http://coreos.com) - A leading linux environment for hosting Docker containers. Can be run on bare-metal, as a VM, or in the cloud.
+* [etcd](http://coreos.com/using-coreos/etcd/) - A distributed key/value configuration store. Essentially a lighter-weight version of Zookeeper written in Go and integrated with CoreOS.
 
 # Installation
 
@@ -76,7 +77,7 @@ You can install from [http://www.vagrantup.com/](http://www.vagrantup.com/), or 
 
 `gradle deployDocker` will compile the code, start a CoreOS virtual machine, create and deploy a Docker image of the application.
 
-`gradle startDocker` will start a new container based on hte deployed Docker image on the CoreOS virtual machine.
+`gradle startDocker` will start a new container based on the deployed Docker image on the CoreOS virtual machine.
 
 The API endpoint will be available at [http://172.17.8.101:8080](http://172.17.8.101:8080).
 
@@ -85,6 +86,24 @@ The console will be available at [http://172.17.8.101:8081](http://172.17.8.101:
 The API docs will be available at [http://172.17.8.101:8080/docs/](http://172.17.8.101:8080/docs/).
 
 A computer consumable version of the docs are at [http://172.17.8.101:8080/api-docs](http://172.17.8.101:8080/api-docs).
+
+## Updating config
+
+The application uses the specified config file as defaults, but looks to [etcd](http://coreos.com/using-coreos/etcd/) for overrides to these settings. This allows you to have the application automatically pick up the appropriate settings for its environment.
+
+To see how this works:
+
+1. Run the app in a Docker container with `gradle startDocker`
+2. Go to [http://172.17.8.101:8081/config](http://172.17.8.101:8081/config) to see the current values of the app configuration settings.
+3. Notice that the value of SwaggerBasePath is different than what is specified in the config file at src/dist/main/sample-config.yml. This is because we updated etcd with a different value when we started CoreOS (see sbin/start-coreos)
+4. Take note the value of the current value of sampleConfigSetting. We will be modifying that below.
+5. `cd coreos; vagrant ssh -c "etcdctl set /restreference/sampleConfigSetting newdatabase.hibu.com"` to update the sample database setting for the cluster.
+6. Refresh your browser with the config settings to see that the updated setting has been detected by the app.
+
+Note that this config change is persistent. If you shut down the CoreOS virtual machine and restart it later, you will see that this config setting remains.
+
+Also note that this config setting is distributed (or would be if we were running more than one CoreOS instance). You don't need to change the setting on every server. It is distributed throughout the environment automatically.
+
 
 ## Extended docs
 

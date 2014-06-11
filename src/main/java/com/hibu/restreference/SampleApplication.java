@@ -4,6 +4,7 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import com.hibu.etcd.ConfigurationServlet;
 import com.hibu.restreference.health.SampleObjectPoolHealthCheck;
 import com.hibu.restreference.repository.SampleRepository;
 import com.hibu.restreference.repository.memory.MemorySampleRepository;
@@ -50,6 +51,9 @@ public class SampleApplication extends Application<SampleConfiguration> {
 		// Wire up the SampleRepository health check
 		final SampleObjectPoolHealthCheck websitePoolHealthCheck = new SampleObjectPoolHealthCheck(repository);
 		environment.healthChecks().register("sampleobject-pool", websitePoolHealthCheck);
+		
+		// Add a servlet to display effective configuration
+		environment.admin().addServlet("Configuration", new ConfigurationServlet(configuration)).addMapping("/config");
 		
 		// Configure swagger
 		swaggerBundle.configureBasePath(configuration.getSwaggerBasePath());

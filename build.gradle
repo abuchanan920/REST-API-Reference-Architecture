@@ -44,6 +44,7 @@ dependencies {
     compile "io.dropwizard:dropwizard-core:0.7.0"
     compile "io.dropwizard:dropwizard-assets:0.7.0"
     compile "com.wordnik:swagger-jaxrs_2.10:1.3.4"
+    compile "com.github.mlaccetti:etcd-client:0.1.1"
 }
 
 // Configure docker settings
@@ -89,9 +90,7 @@ distDocker {
 
 task startCoreOS(type:Exec) {
 	description 'Starts the CoreOS Server'
-	workingDir 'coreos'
-	commandLine 'vagrant'
-	args 'up'
+	commandLine 'sbin/start-coreos'
 }
 
 task stopCoreOS(type:Exec) {
@@ -112,7 +111,7 @@ task startDocker(type:Exec,dependsOn:'startCoreOS') {
 	description 'Starts the docker container'
 	workingDir 'build/docker'
 	commandLine 'docker'
-	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/docker-config.yml'
+	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
 }
 
 
