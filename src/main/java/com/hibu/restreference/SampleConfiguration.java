@@ -27,12 +27,11 @@ public class SampleConfiguration extends EtcdConfiguration {
 
 	@JsonProperty
 	public String getSampleConfigSetting() {
-		// CAUTION: This will effectively check with etcd everytime the setting is accessed.
-		// Depending on your needs, you may want to implement a caching scheme for the settings so as not to check every time.
-		// Or better yet, read once and then listen for updates.
 		String result = getSetting(SETTING_SAMPLE_CONFIG);
 		if (result == null) {
 			result = sampleConfigSetting;
+		} else {
+			sampleConfigSetting = result;
 		}
 		return result;
 	}
@@ -44,12 +43,11 @@ public class SampleConfiguration extends EtcdConfiguration {
 	
 	@JsonProperty
 	public String getSwaggerBasePath() {
-		// CAUTION: This will effectively check with etcd everytime the setting is accessed.
-		// Depending on your needs, you may want to implement a caching scheme for the settings so as not to check every time.
-		// Or better yet, read once and then listen for updates.
 		String result = getSetting(SETTING_SWAGGER_BASE_PATH);
 		if (result == null) {
 			result = swaggerBasePath;
+		} else {
+			swaggerBasePath = result;
 		}
 		return result;
 	}

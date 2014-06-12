@@ -104,6 +104,8 @@ Note that this config change is persistent. If you shut down the CoreOS virtual 
 
 Also note that this config setting is distributed (or would be if we were running more than one CoreOS instance). You don't need to change the setting on every server. It is distributed throughout the environment automatically.
 
+The implementation provided will cache configuration information within the app process for performance and place watches on etcd to pick up changes automatically. The user should always use the value from the Configuration object when needed to be sure they are using the latest value. The user would need to check to make sure any persistent objects are still valid when used (e.g. a database connection), or a callback function could be added to the Configuration object to notify the app immediately that it should re-open a database connection (for example).
+
 
 ## Extended docs
 
