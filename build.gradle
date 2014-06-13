@@ -88,7 +88,17 @@ distDocker {
     exposePort 8081
 }
 
-task startCoreOS(type:Exec) {
+task configCoreOS(type:Exec) {
+    ext.templateFile = file('coreos/user-data.template')
+    ext.configFile = file('coreos/user-data')
+    inputs.files(templateFile)
+    outputs.file(configFile)
+
+    description 'Configures the CoreOS cluster (etcd, etc.)'
+    commandLine 'coreos/config-user-data.sh'
+}
+
+task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
 	description 'Starts the CoreOS Server'
 	commandLine 'sbin/start-coreos'
 }
