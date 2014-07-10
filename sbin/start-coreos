@@ -1,5 +1,5 @@
 #!/bin/bash
 pushd coreos
 vagrant up
-vagrant ssh --command "etcdctl set /restreference/swaggerBasePath http://172.17.8.101:8080"
+vagrant ssh core-01 --command "etcdctl set /restreference/swaggerBasePath http://172.17.8.101:8080"
 popd
