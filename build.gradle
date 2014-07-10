@@ -88,7 +88,17 @@ distDocker {
     exposePort 8081
 }
 
-task startCoreOS(type:Exec) {
+task configCoreOS(type:Exec) {
+    ext.templateFile = file('coreos/user-data.template')
+    ext.configFile = file('coreos/user-data')
+    inputs.files(templateFile)
+    outputs.file(configFile)
+
+    description 'Configures the CoreOS cluster (etcd, etc.)'
+    commandLine 'coreos/config-user-data.sh'
+}
+
+task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
 	description 'Starts the CoreOS Server'
 	commandLine 'sbin/start-coreos'
 }
@@ -100,11 +110,29 @@ task stopCoreOS(type:Exec) {
 	args 'halt'
 }
 
+task destroyCoreOS(type:Exec) {
+    description 'Delete the CoreOS Servers'
+    workingDir 'coreos'
+    commandLine './destroy.sh'
+}
+
 task deployDocker(type:Exec,dependsOn:['distDocker','startCoreOS']) {
-	description 'Generates the Docker image on the CoreOS server'
+	description 'Generates the Docker image'
 	workingDir 'build/docker'
 	commandLine 'docker'
 	args 'build', '-t', dockerTag, '.'
+}
+
+task tagDocker(type:Exec,dependsOn:['startCoreOS']) {
+    description 'Tags the Docker image'
+    commandLine 'docker'
+    args 'tag', dockerTag, '172.17.8.100:5000/' + dockerTag
+}
+
+task pushDocker(type:Exec,dependsOn:['startCoreOS']) {
+    description 'Pushes the Docker image to the private registry'
+    commandLine 'docker'
+    args 'push', '172.17.8.100:5000/' + dockerTag
 }
 
 task startDocker(type:Exec,dependsOn:'startCoreOS') {
@@ -114,4 +142,27 @@ task startDocker(type:Exec,dependsOn:'startCoreOS') {
 	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
 }
 
+task initFleet(type:Exec, dependsOn:'startCoreOS') {
+    description 'Configures fleet'
+    workingDir 'fleet'
+    commandLine './init.sh'
+}
 
+task uninitFleet(type:Exec, dependsOn:'startCoreOS') {
+    description 'Deconfigures fleet'
+    workingDir 'fleet'
+    workingDir 'fleet'
+    commandLine './destroy.sh'
+}
+
+task startFleet(type:Exec, dependsOn:'initFleet') {
+    description 'Starts the full cluster of docker containers'
+    workingDir 'fleet'
+    commandLine './start.sh'
+}
+
+task stopFleet(type:Exec) {
+    description 'Stops the full cluster of docker containers'
+    workingDir 'fleet'
+    commandLine './stop.sh'
+}

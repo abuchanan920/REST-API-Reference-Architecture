@@ -1,0 +1,9 @@
+[Unit]
+Description=restreference-api
+
+[Service]
+ExecStart=/usr/bin/docker run --publish=8080:8080 --publish=8081:8081 --rm --name restreference-api-1 172.17.8.100:5000/hibu/rest-reference server /REST-API-Reference-Architecture-1.0-SNAPSHOT/main/sample-config.yml
+ExecStop=/usr/bin/docker kill restreference-api-1
+
+[X-Fleet]
+X-Conflicts=restreference-api.*.service

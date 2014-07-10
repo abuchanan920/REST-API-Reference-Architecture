@@ -1,13 +1,13 @@
 # CoreOS Vagrant
 
-This repo provides a template Vagrantfile to create a CoreOS virtual machine using the Virtualbox software hypervisor.
+This repo provides a template Vagrantfile to create a CoreOS virtual machine using the VirtualBox software hypervisor.
 After setup is complete you will have a single CoreOS virtual machine running on your local machine.
 
 ## Streamlined setup
 
 1) Install dependencies
 
-* [Virtualbox][virtualbox] 4.3.10 or greater.
+* [VirtualBox][virtualbox] 4.3.10 or greater.
 * [Vagrant][vagrant] 1.6 or greater.
 
 2) Clone this project and get it running!
@@ -19,21 +19,21 @@ cd coreos-vagrant
 
 3) Startup and SSH
 
-There are two "providers" for Virtualbox with slightly different instructions.
-Follow one of the folowing two options:
+There are two "providers" for Vagrant with slightly different instructions.
+Follow one of the following two options:
 
-**Virtualbox Provider**
+**VirtualBox Provider**
 
-The Virtualbox provider is the default Vagrant provider. Use this if you are unsure.
+The VirtualBox provider is the default Vagrant provider. Use this if you are unsure.
 
 ```
 vagrant up
 vagrant ssh
 ```
 
-**VMWare Provider**
+**VMware Provider**
 
-The VMWare provider is a commercial addon from Hashicorp that offers better stability and speed.
+The VMware provider is a commercial addon from Hashicorp that offers better stability and speed.
 If you use this provider follow these instructions.
 
 ```
@@ -94,3 +94,17 @@ Simply remove the old box file and vagrant will download the latest one the next
 vagrant box remove coreos --provider vmware_fusion
 vagrant box remove coreos --provider virtualbox
 ```
+
+## Docker Forwarding
+
+By setting the `$expose_docker_tcp` configuration value you can forward a local TCP port to docker on
+each CoreOS machine that you launch. The first machine will be available on the port that you specify
+and each additional machine will increment the port by 1.
+
+Follow the [Enable Remote API instructions][coreos-enabling-port-forwarding] to get the CoreOS VM setup to work with port forwarding.
+
+[coreos-enabling-port-forwarding]: https://coreos.com/docs/launching-containers/building/customizing-docker/#enable-the-remote-api-on-a-new-socket
+
+Then you can then use the `docker` command from your local shell by setting `DOCKER_HOST`:
+
+    export DOCKER_HOST=tcp://localhost:2375

@@ -3,8 +3,10 @@
 
 require 'fileutils'
 
-CLOUD_CONFIG_PATH = "./user-data"
-CONFIG= "config.rb"
+Vagrant.require_version ">= 1.6.0"
+
+CLOUD_CONFIG_PATH = File.join(File.dirname(__FILE__), "user-data")
+CONFIG = File.join(File.dirname(__FILE__), "config.rb")
 
 # Defaults for config options defined in CONFIG
 $num_instances = 1
@@ -21,7 +23,44 @@ if ENV["NUM_INSTANCES"].to_i > 0 && ENV["NUM_INSTANCES"]
 end
 
 if File.exist?(CONFIG)
-	require_relative CONFIG
+  require CONFIG
+end
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "docker-registry" do |dockerreg|
+    dockerreg.vm.provision :file, :source => "user-data.docker-registry", :destination => "/tmp/vagrantfile-user-data"
+    dockerreg.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
+
+    dockerreg.vm.provision "docker" do |d|
+      d.build_image "/shared", args: "-t hibu/docker-registry"
+      d.run "hibu/docker-registry", args: "-p 5000:5000"
+    end
+
+    dockerreg.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.memory = 1024
+      vb.cpus = 1
+      vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
+      vb.customize ["modifyvm", :id, "--nictype2", "virtio"]
+    end
+
+  
+    dockerreg.vm.provider "docker" do |d|
+      d.build_dir = "../docker-registry"
+    end
+
+    dockerreg.vm.hostname = "docker-registry"
+    dockerreg.vm.network "forwarded_port", guest: 5000, host: 5000, auto_correct: true
+    
+    ip = "172.17.8.100"
+    dockerreg.vm.network :private_network, ip: ip
+
+    dockerreg.vm.synced_folder "../docker-registry", "/shared"
+
+
+  end
+
 end
 
 Vagrant.configure("2") do |config|
@@ -31,6 +70,13 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider :vmware_fusion do |vb, override|
     override.vm.box_url = "http://%s.release.core-os.net/amd64-usr/current/coreos_production_vagrant_vmware_fusion.json" % $update_channel
+  end
+
+  config.vm.provider :virtualbox do |v|
+    # On VirtualBox, we don't have guest additions or a functional vboxsf
+    # in CoreOS, so tell Vagrant that so it can be smarter.
+    v.check_guest_additions = false
+    v.functional_vboxsf     = false
   end
 
   # plugin conflict
@@ -63,7 +109,11 @@ Vagrant.configure("2") do |config|
       end
 
       if $expose_docker_tcp
-        config.vm.network "forwarded_port", guest: 4243, host: $expose_docker_tcp, auto_correct: true
+        config.vm.network "forwarded_port", guest: 2375, host: ($expose_docker_tcp + i - 1), auto_correct: true
+      end
+
+      config.vm.provider :vmware_fusion do |vb|
+        vb.gui = $vb_gui
       end
 
       config.vm.provider :virtualbox do |vb|
