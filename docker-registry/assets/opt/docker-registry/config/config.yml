@@ -26,7 +26,7 @@ common:
 # This is the default configuration when no flavor is specified
 dev:
     storage: local
-    storage_path: /tmp/registry
+    storage_path: /opt/docker-registry/registry
     loglevel: debug
 
 # To specify another flavor, set the environment variable SETTINGS_FLAVOR
