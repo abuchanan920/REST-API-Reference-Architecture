@@ -116,20 +116,20 @@ task destroyCoreOS(type:Exec) {
     commandLine './destroy.sh'
 }
 
-task deployDocker(type:Exec,dependsOn:['distDocker','startCoreOS']) {
+task deployDocker(type:Exec) {
 	description 'Generates the Docker image'
 	workingDir 'build/docker'
 	commandLine 'docker'
 	args 'build', '-t', dockerTag, '.'
 }
 
-task tagDocker(type:Exec,dependsOn:['startCoreOS']) {
+task tagDocker(type:Exec) {
     description 'Tags the Docker image'
     commandLine 'docker'
     args 'tag', dockerTag, '172.17.8.100:5000/' + dockerTag
 }
 
-task pushDocker(type:Exec,dependsOn:['startCoreOS']) {
+task pushDocker(type:Exec) {
     description 'Pushes the Docker image to the private registry'
     commandLine 'docker'
     args 'push', '172.17.8.100:5000/' + dockerTag
@@ -142,13 +142,13 @@ task startDocker(type:Exec,dependsOn:'startCoreOS') {
 	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
 }
 
-task initFleet(type:Exec, dependsOn:'startCoreOS') {
+task initFleet(type:Exec) {
     description 'Configures fleet'
     workingDir 'fleet'
     commandLine './init.sh'
 }
 
-task uninitFleet(type:Exec, dependsOn:'startCoreOS') {
+task uninitFleet(type:Exec) {
     description 'Deconfigures fleet'
     workingDir 'fleet'
     workingDir 'fleet'
