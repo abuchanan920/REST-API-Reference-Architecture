@@ -79,7 +79,7 @@ fatJar {
 task start(type:Exec,dependsOn:'fatJar') {
 	description 'Compiles and runs the server'
 	commandLine 'java'
-	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/main/dist/sample-config.yml'
+	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/dist/main/sample-config.yml'
 }
 
 // Builds docker config Dockerfile. On Linux it will also generate the final docker image.
