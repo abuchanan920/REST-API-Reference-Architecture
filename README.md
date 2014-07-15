@@ -59,6 +59,8 @@ A computer consumable version of the docs are at [http://localhost:8080/api-docs
 ##### Docker
 On a Mac, you can install using [brew](http://brew.sh/) via `brew install docker`.
 
+NOTE: As of this writing (7/15/2014), you will need the 1.0.1 version of docker on your laptop. Newer versions (1.1.0+) cannot talk to the version of Docker on the CoreOS virtual machines. You can do a `cd $(brew --prefix );git checkout 7666e02 Library/Formula/docker.rb;brew install docker` and a `brew switch docker 1.0.1` to configure your machine to use the correct version. This should cease to be a problem with an upcoming CoreOS release.
+
 This will install the client tools. Since Docker runs on top of Linux containers, you will be remotely controlling a Linux system. To set up your connection to where the server will be, you will then need to add `export DOCKER_HOST=172.17.8.100:4243` to your login profile (.zprofile or equivalent).
 
 Instructions for other platforms are available at [http://docs.docker.io/introduction/get-docker/](http://docs.docker.io/introduction/get-docker/).
@@ -121,6 +123,8 @@ Note that this config change is persistent. If you shut down the CoreOS virtual 
 Also note that this config setting is distributed (or would be if we were running more than one CoreOS instance). You don't need to change the setting on every server. It is distributed throughout the environment automatically.
 
 The implementation provided will cache configuration information within the app process for performance and place watches on etcd to pick up changes automatically. The user should always use the value from the Configuration object when needed to be sure they are using the latest value. The user would need to check to make sure any persistent objects are still valid when used (e.g. a database connection), or a callback function could be added to the Configuration object to notify the app immediately that it should re-open a database connection (for example).
+
+BUG: Stopping the Vagrant virtual machines doesn't clean make fleet clean up after itself properly. This can cause problems when restarting. If you run into this, you can run docker against each of the machines and delete the pre-existing container like so `DOCKER_HOST=172.17.8.101:4243 docker ps -a` to get the id of the container and then `DOCKER_HOST=172.17.8.101:4243 docker rm <id-you-just-found>` to remove it. Repeat fo 172.17.8.101-103. I will fix this one soon.
 
 
 ## Extended docs
