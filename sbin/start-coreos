@@ -1,5 +1,5 @@
 #!/bin/bash
-rm ~/.fleetctl/known_hosts
+rm -f ~/.fleetctl/known_hosts
 pushd coreos
 vagrant up
 # Vagrant can't set docker containers to autostart in CoreOS yet, so manually reprovision...
