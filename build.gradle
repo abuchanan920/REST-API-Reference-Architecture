@@ -142,6 +142,12 @@ task startDocker(type:Exec,dependsOn:'startCoreOS') {
 	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
 }
 
+task deployHAProxy(type:Exec) {
+    description 'Builds and deploys the HAProxy container'
+    workingDir 'docker-haproxy-etcd'
+    commandLine './deploy.sh'
+}
+
 task initFleet(type:Exec) {
     description 'Configures fleet'
     workingDir 'fleet'
