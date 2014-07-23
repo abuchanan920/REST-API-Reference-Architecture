@@ -153,6 +153,11 @@ task updateDockerImages(type:Exec) {
     commandLine 'sbin/updateDockerImages.sh'
 }
 
+task reapStaleDockerContainers(type:Exec) {
+    description 'Remove any docker containers that have exited'
+    commandLine 'sbin/reapStaleContainers.sh'
+}
+
 task initFleet(type:Exec) {
     description 'Configures fleet'
     workingDir 'fleet'
