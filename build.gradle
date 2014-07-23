@@ -90,7 +90,7 @@ distDocker {
 
 task configCoreOS(type:Exec) {
     ext.templateFile = file('coreos/user-data.template')
-    ext.configFile = file('coreos/user-data')
+    ext.configFile = file('coreos/user-data.01')
     inputs.files(templateFile)
     outputs.file(configFile)
 
