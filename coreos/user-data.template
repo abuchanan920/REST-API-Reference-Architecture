@@ -6,6 +6,8 @@ coreos:
       discovery: $TOKEN
       addr: $public_ipv4:4001
       peer-addr: $public_ipv4:7001
+  fleet:
+    metadata: server=core-$CORE
   units:
     - name: etcd.service
       command: start
