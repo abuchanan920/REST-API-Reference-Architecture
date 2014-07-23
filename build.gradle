@@ -161,7 +161,7 @@ task uninitFleet(type:Exec) {
     commandLine './destroy.sh'
 }
 
-task startFleet(type:Exec, dependsOn:'initFleet') {
+task startFleet(type:Exec) {
     description 'Starts the full cluster of docker containers'
     workingDir 'fleet'
     commandLine './start.sh'
