@@ -35,11 +35,3 @@ coreos:
 
         [Install]
         WantedBy=sockets.target
-
-write_files:
-  - path: /etc/hosts
-    content: |
-      172.17.8.100  docker-registry
-      172.17.8.101  core-01
-      172.17.8.102  core-02
-      172.17.8.103  core-03
