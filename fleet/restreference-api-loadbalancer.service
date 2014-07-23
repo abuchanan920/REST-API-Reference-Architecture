@@ -4,3 +4,6 @@ Description=restreference-api load balancer
 [Service]
 ExecStart=/usr/bin/docker run --publish=80:80 --publish=443:443 --publish=8080:8080 --rm=true --name restreference-api-lb 172.17.8.100:5000/hibu/haproxy-etcd
 ExecStop=/usr/bin/docker stop %n
+
+[X-Fleet]
+X-ConditionMachineMetadata=server=core-01
