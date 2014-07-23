@@ -100,7 +100,7 @@ task configCoreOS(type:Exec) {
 
 task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
 	description 'Starts the CoreOS Server'
-	commandLine 'sbin/start-coreos'
+	commandLine 'coreos/start.sh'
 }
 
 task stopCoreOS(type:Exec) {
