@@ -90,7 +90,7 @@ distDocker {
 
 task configCoreOS(type:Exec) {
     ext.templateFile = file('coreos/user-data.template')
-    ext.configFile = file('coreos/user-data')
+    ext.configFile = file('coreos/user-data.01')
     inputs.files(templateFile)
     outputs.file(configFile)
 
@@ -100,7 +100,7 @@ task configCoreOS(type:Exec) {
 
 task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
 	description 'Starts the CoreOS Server'
-	commandLine 'sbin/start-coreos'
+	commandLine 'coreos/start.sh'
 }
 
 task stopCoreOS(type:Exec) {
@@ -142,6 +142,22 @@ task startDocker(type:Exec,dependsOn:'startCoreOS') {
 	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
 }
 
+task deployHAProxy(type:Exec) {
+    description 'Builds and deploys the HAProxy container'
+    workingDir 'docker-haproxy-etcd'
+    commandLine './deploy.sh'
+}
+
+task updateDockerImages(type:Exec) {
+    description 'Have each core pull the latest versions of the images'
+    commandLine 'sbin/updateDockerImages.sh'
+}
+
+task reapStaleDockerContainers(type:Exec) {
+    description 'Remove any docker containers that have exited'
+    commandLine 'sbin/reapStaleContainers.sh'
+}
+
 task initFleet(type:Exec) {
     description 'Configures fleet'
     workingDir 'fleet'
@@ -155,7 +171,7 @@ task uninitFleet(type:Exec) {
     commandLine './destroy.sh'
 }
 
-task startFleet(type:Exec, dependsOn:'initFleet') {
+task startFleet(type:Exec) {
     description 'Starts the full cluster of docker containers'
     workingDir 'fleet'
     commandLine './start.sh'
