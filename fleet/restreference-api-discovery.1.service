@@ -3,8 +3,8 @@ Description=Announce restreference-api
 BindsTo=restreference-api.1.service
 
 [Service]
-ExecStart=/bin/sh -c "while true; do etcdctl set /services/web/api1 '{ \"host\": \"%H\", \"port\": 18080, \"version\": \"1.0-SNAPSHOT\" }' --ttl 60;sleep 45;done"
-ExecStop=/usr/bin/etcdctl rm /services/web/api1
+ExecStart=/bin/sh -c "while true; do etcdctl set /services/restreference-api/api1 '{ \"host\": \"%H\", \"port\": 18080, \"version\": \"1.0-SNAPSHOT\" }' --ttl 60;sleep 45;done"
+ExecStop=/usr/bin/etcdctl rm /services/restreference-api/api1
 
 [X-Fleet]
 X-ConditionMachineOf=restreference-api.1.service
