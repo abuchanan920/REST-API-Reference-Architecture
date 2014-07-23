@@ -148,6 +148,11 @@ task deployHAProxy(type:Exec) {
     commandLine './deploy.sh'
 }
 
+task updateDockerImages(type:Exec) {
+    description 'Have each core pull the latest versions of the images'
+    commandLine 'sbin/updateDockerImages.sh'
+}
+
 task initFleet(type:Exec) {
     description 'Configures fleet'
     workingDir 'fleet'
