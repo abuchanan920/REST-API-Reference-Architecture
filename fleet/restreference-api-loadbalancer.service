@@ -1,0 +1,8 @@
+[Unit]
+Description=restreference-api load balancer
+
+[Service]
+ExecStart=/usr/bin/docker run --env="HAPROXY_ETCD_CONFIG=/config/haproxy/restreference-api" --publish=80:80 --publish=443:443 --publish=8080:8080 --rm=true 172.17.8.100:5000/hibu/haproxy-etcd
+
+[X-Fleet]
+X-ConditionMachineMetadata=server=core-01
