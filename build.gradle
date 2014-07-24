@@ -135,13 +135,6 @@ task pushDocker(type:Exec) {
     args 'push', '172.17.8.100:5000/' + dockerTag
 }
 
-task startDocker(type:Exec,dependsOn:'startCoreOS') {
-	description 'Starts the docker container'
-	workingDir 'build/docker'
-	commandLine 'docker'
-	args 'run', '--detach=true', '--publish=8080:8080', '--publish=8081:8081', dockerTag, 'server', '/REST-API-Reference-Architecture-' + version + '/main/sample-config.yml'
-}
-
 task deployHAProxy(type:Exec) {
     description 'Builds and deploys the HAProxy container'
     workingDir 'docker-haproxy-etcd'
