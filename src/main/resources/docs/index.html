@@ -25,7 +25,7 @@
   <script type="text/javascript">
     $(function () {
       window.swaggerUi = new SwaggerUi({
-      url: "https://rest/api-docs",
+      url: "/api-docs",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       onComplete: function(swaggerApi, swaggerUi){
@@ -72,7 +72,7 @@
       <div class='input icon-btn'>
         <img id="show-wordnik-dev-icon" src="./images/wordnik_api.png" title="Show Sample Apis">
       </div>
-      <div class='input'><input placeholder="https://rest/api-docs" id="input_baseUrl" name="baseUrl" type="text"/></div>
+      <div class='input'><input placeholder="/api-docs" id="input_baseUrl" name="baseUrl" type="text"/></div>
       <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
       <div class='input'><a id="explore" href="#">Explore</a></div>
     </form>
