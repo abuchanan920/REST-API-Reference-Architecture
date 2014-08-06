@@ -147,6 +147,12 @@ task deployLogstash(type:Exec) {
     commandLine './deploy.sh'
 }
 
+task deployLogstashForwarder(type:Exec) {
+    description 'Builds and deploys the Logstash forwarder container'
+    workingDir 'logstash-forwarder'
+    commandLine './deploy.sh'
+}
+
 task updateDockerImages(type:Exec) {
     description 'Have each core pull the latest versions of the images'
     commandLine 'sbin/updateDockerImages.sh'
@@ -187,6 +193,7 @@ task startDemo << {
     startCoreOS.execute()
     deployHAProxy.execute()
     deployLogstash.execute()
+    deployLogstashForwarder.execute()
     distDocker.execute()
     deployDocker.execute()
     tagDocker.execute()
