@@ -13,4 +13,4 @@ stateOrProvinceName		= Pennsylvania
 localityName			= King of Prussia
 0.organizationName		= Hibu
 emailAddress			= user@hibu.com
-commonName 				= logger
+commonName 				= logstash
