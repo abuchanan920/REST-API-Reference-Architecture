@@ -24,7 +24,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'se.transmode.gradle:gradle-docker:1.1'
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
         classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'    
     }
 }
@@ -51,7 +51,6 @@ dependencies {
 docker {
     maintainer dockerMaintainer
 }
-
 
 // TASKS
 
@@ -86,6 +85,7 @@ task start(type:Exec,dependsOn:'fatJar') {
 distDocker {
     exposePort 8080
     exposePort 8081
+    tag dockerTag
 }
 
 task configCoreOS(type:Exec) {
