@@ -26,10 +26,6 @@ input {
   collectd {typesdb => ["/opt/collectd-types.db"]}
 }
 output {
-  stdout {
-      codec => rubydebug
-  }
-
   elasticsearch {
       embedded => $EMBEDDED
       host => "$ES_HOST"
