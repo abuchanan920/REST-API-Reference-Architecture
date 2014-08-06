@@ -1,0 +1,16 @@
+[req]
+default_bits            = 2048
+default_keyfile         = logstash-forwarder.key
+distinguished_name      = req_distinguished_name
+#Don't encrypt the key
+encrypt_key             = no
+prompt                  = no
+string_mask             = nombstr
+
+[req_distinguished_name]
+countryName				= US
+stateOrProvinceName		= Pennsylvania
+localityName			= King of Prussia
+0.organizationName		= Hibu
+emailAddress			= user@hibu.com
+commonName 				= logger
