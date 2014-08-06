@@ -181,3 +181,15 @@ task stopFleet(type:Exec) {
     workingDir 'fleet'
     commandLine './stop.sh'
 }
+
+task startDemo << {
+    configCoreOS.execute()
+    startCoreOS.execute()
+    deployHAProxy.execute()
+    deployLogstash.execute()
+    distDocker.execute()
+    deployDocker.execute()
+    tagDocker.execute()
+    pushDocker.execute()
+    startFleet.execute()
+}
