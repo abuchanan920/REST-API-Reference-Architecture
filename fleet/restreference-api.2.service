@@ -2,7 +2,7 @@
 Description=restreference-api
 
 [Service]
-ExecStart=/usr/bin/docker run --publish=18080:8080 --publish=8081:8081 --rm=true 172.17.8.100:5000/hibu/rest-reference server /REST-API-Reference-Architecture-1.0-SNAPSHOT/main/sample-config.yml
+ExecStart=/usr/bin/docker run --publish=18080:8080 --publish=8081:8081 --rm=true 172.17.8.100:5000/hibu/rest-reference server /REST-API-Reference-Architecture-1.0-SNAPSHOT/main/clustered-config.yml
 SuccessExitStatus=143
 
 [X-Fleet]
