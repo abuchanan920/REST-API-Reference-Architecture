@@ -19,9 +19,11 @@ import com.hibu.restreference.repository.SampleRepositoryException;
 public class MemorySampleRepository implements SampleRepository {
 	
 	private final Map<UUID,SampleObjectBean> objects = new HashMap<>();
+	private int addSampleCount = 0;
 
 	@Override
 	public UUID addSampleObject(SampleObjectBean sampleObject) {
+		addSampleCount++;
 		sampleObject.setId(UUID.randomUUID());
 		updateSampleObject(sampleObject);
 		return sampleObject.getId();
@@ -54,6 +56,11 @@ public class MemorySampleRepository implements SampleRepository {
 	@Override
 	public void deleteSampleObject(UUID id) {
 		objects.remove(id);
+	}
+
+	@Override
+	public int getAddSampleCount() {
+		return addSampleCount;
 	}
 
 }
