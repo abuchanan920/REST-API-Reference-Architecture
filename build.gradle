@@ -154,19 +154,19 @@ task pushDocker(type:Exec) {
 
 task deployHAProxy(type:Exec) {
     description 'Builds and deploys the HAProxy container'
-    workingDir 'docker-haproxy-etcd'
+    workingDir 'docker/docker-haproxy-etcd'
     commandLine './deploy.sh'
 }
 
 task deployLogstash(type:Exec) {
     description 'Builds and deploys the Logstash container'
-    workingDir 'logstash'
+    workingDir 'docker/logstash'
     commandLine './deploy.sh'
 }
 
 task deployLogstashForwarder(type:Exec) {
     description 'Builds and deploys the Logstash forwarder container'
-    workingDir 'logstash-forwarder'
+    workingDir 'docker/logstash-forwarder'
     commandLine './deploy.sh'
 }
 
