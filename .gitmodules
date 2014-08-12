@@ -1,3 +1,9 @@
 [submodule "vendor/swagger-ui"]
 	path = vendor/swagger-ui
 	url = https://github.com/wordnik/swagger-ui.git
+[submodule "vendor/etcdctl"]
+	path = vendor/etcdctl
+	url = https://github.com/coreos/etcdctl.git
+[submodule "vendor/fleet"]
+	path = vendor/fleet
+	url = https://github.com/coreos/fleet

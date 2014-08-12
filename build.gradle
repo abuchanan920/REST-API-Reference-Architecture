@@ -89,6 +89,22 @@ distDocker {
     tag dockerTag
 }
 
+task compileEtcdCtl(type:Exec) {
+    outputs.file(file('vendor/etcdctl/bin/etcdctl'))
+
+    description 'Compiles etcdctl'
+    workingDir 'vendor/etcdctl'
+    commandLine './build'
+}
+
+task compileFleetCtl(type:Exec) {
+    outputs.file(file('vendor/fleet/bin/fleetctl'))
+
+    description 'Compiles fleetctl'
+    workingDir 'vendor/fleet'
+    commandLine './build'
+}
+
 task configCoreOS(type:Exec) {
     ext.templateFile = file('coreos/user-data.template')
     ext.configFile = file('coreos/user-data.01')
@@ -99,7 +115,7 @@ task configCoreOS(type:Exec) {
     commandLine 'coreos/config-user-data.sh'
 }
 
-task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
+task startCoreOS(type:Exec,dependsOn:['configCoreOS','compileEtcdCtl','compileFleetCtl']) {
 	description 'Starts the CoreOS Server'
 	commandLine 'coreos/start.sh'
 }
@@ -190,6 +206,8 @@ task stopFleet(type:Exec) {
 }
 
 task startDemo << {
+    compileEtcdCtl.execute()
+    compileFleetCtl.execute()
     configCoreOS.execute()
     startCoreOS.execute()
     deployHAProxy.execute()
