@@ -5,4 +5,3 @@ for i in $(etcdctl --peers ${ETCD_PEER} ls --recursive /services/${HAPROXY_BACKE
         ETCD_WATCH_ACTION="set" ETCD_WATCH_KEY=$i ETCD_WATCH_VALUE=$(etcdctl --peers ${ETCD_PEER} get ${ETCD_WATCH_KEY} | egrep -v "Error: 100: Key not found|Cannot sync with the cluster") /update-haproxy.sh
 done
 exec /usr/local/bin/etcdctl --peers ${ETCD_PEER}  exec-watch --recursive /services/${HAPROXY_BACKEND_SERVICE:-"web"} -- /update-haproxy.sh
-

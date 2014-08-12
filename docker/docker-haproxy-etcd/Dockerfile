@@ -1,6 +1,6 @@
 FROM redguava/haproxy
 
-ADD haproxy.cfg /etc/haproxy/haproxy.cfg
+ADD haproxy.cfg.template /etc/haproxy/haproxy.cfg.template
 ADD run.sh /run.sh
 ADD start-etcdctl.sh /start-etcdctl.sh
 ADD setup-haproxy.sh /setup-haproxy.sh

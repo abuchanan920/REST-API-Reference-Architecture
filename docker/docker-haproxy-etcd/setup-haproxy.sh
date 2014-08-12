@@ -1,5 +1,6 @@
 #!/bin/bash
 
+HAPROXY_CONFIG_TEMPLATE=/etc/haproxy/haproxy.cfg.template
 HAPROXY_CONFIG=/etc/haproxy/haproxy.cfg
 ETCDCTL_PEER="10.1.42.1:4001"
 
@@ -23,6 +24,7 @@ HAPROXY_STATS_REALM=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:
 HAPROXY_STATS_USERNAME=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_USERNAME | grep -v "Error: 100: Key not found" || echo "username")
 HAPROXY_STATS_PASSWORD=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_PASSWORD | grep -v "Error: 100: Key not found" || echo "password")
 
+cp $HAPROXY_CONFIG_TEMPLATE $HAPROXY_CONFIG
 sed -i -e "s/HAPROXY_GLOBAL_MAX_CONNECTIONS/${HAPROXY_GLOBAL_MAX_CONNECTIONS}/g" $HAPROXY_CONFIG
 sed -i -e "s/HAPROXY_DEFAULTS_MAX_CONNECTIONS/${HAPROXY_DEFAULTS_MAX_CONNECTIONS}/g" $HAPROXY_CONFIG
 sed -i -e "s/HAPROXY_DEFAULTS_RETRIES/${HAPROXY_DEFAULTS_RETRIES}/g" $HAPROXY_CONFIG
@@ -43,3 +45,10 @@ sed -i -e "s/HAPROXY_STATS_REALM/${HAPROXY_STATS_REALM}/g" $HAPROXY_CONFIG
 sed -i -e "s/HAPROXY_STATS_USERNAME/${HAPROXY_STATS_USERNAME}/g" $HAPROXY_CONFIG
 sed -i -e "s/HAPROXY_STATS_PASSWORD/${HAPROXY_STATS_PASSWORD}/g" $HAPROXY_CONFIG
 
+/usr/local/sbin/haproxy -c -q -f /etc/haproxy/haproxy.cfg
+if [ $? -ne 0 ]; then
+        echo "Errors in configuration file, check with $prog check."
+        exit 1
+fi
+
+exec /usr/local/sbin/haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
