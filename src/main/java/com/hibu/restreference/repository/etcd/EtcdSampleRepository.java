@@ -19,8 +19,7 @@ import com.justinsb.etcd.EtcdResult;
 // Don't do this in a production system. Etcd isn't meant for this purpose. 
 // I'm just using it for demo purposes to avoid adding another service to the mix.
 public class EtcdSampleRepository implements SampleRepository {	
-	//private static final String ETCD_SERVICE_URL = "http://10.1.42.1:4001/"; // Where the service is exposed to docker containers
-	private static final String ETCD_SERVICE_URL = "http://172.17.8.101:4001/";
+	private static final String ETCD_SERVICE_URL = "http://10.1.42.1:4001/"; // Where the service is exposed to docker containers
 	
 	private final String basePath;
 	private EtcdClient client = new EtcdClient(URI.create(ETCD_SERVICE_URL));
