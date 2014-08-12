@@ -5,10 +5,11 @@ pushd coreos
 vagrant up
 # Vagrant can't set docker containers to autostart in CoreOS yet, so manually reprovision...
 vagrant provision docker-registry
-# Set the config value to an initial value
-sleep 20
-etcdctl set /restreference/swaggerBasePath "https://rest"
 # Add the key to the VMs so some of the command line tools work
 ssh-add ~/.vagrant.d/insecure_private_key
+# Set the config values to an initial settings
+sleep 20
+../sbin/configureEtcd.sh
+# Remove old containers
 ../sbin/reapStaleContainers.sh
 popd

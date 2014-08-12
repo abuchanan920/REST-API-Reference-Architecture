@@ -6,4 +6,6 @@ popd
 ./coreos/config-user-data.sh
 pushd coreos
 vagrant up
+sleep 20
+../sbin/configureEtcd.sh
 popd
