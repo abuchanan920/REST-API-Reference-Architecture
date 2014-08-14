@@ -5,7 +5,7 @@ HAPROXY_CONFIG="/etc/haproxy/haproxy.cfg"
 
 function update {
 
-  HOST_NAME=$(echo $ETCD_WATCH_KEY | cut -d/ -f4)
+  HOST_NAME=$(echo ${ETCD_WATCH_KEY##*/})
   HOST_IP=$(echo $ETCD_WATCH_VALUE | tr -d '"{} ' | cut -d, -f1 | cut -d: -f2)
   HOST_PORT=$(echo $ETCD_WATCH_VALUE | tr -d '"{} ' | cut -d, -f2 | cut -d: -f2)
 

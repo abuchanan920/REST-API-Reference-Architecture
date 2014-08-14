@@ -19,6 +19,7 @@ import com.justinsb.etcd.EtcdResult;
 // Don't do this in a production system. Etcd isn't meant for this purpose. 
 // I'm just using it for demo purposes to avoid adding another service to the mix.
 public class EtcdSampleRepository implements SampleRepository {	
+	private static final String CONFCHANNEL_ENV = "CONFCHANNEL";
 	private static final String ETCD_SERVICE_URL = "http://10.1.42.1:4001/"; // Where the service is exposed to docker containers
 	
 	private final String basePath;
@@ -34,6 +35,10 @@ public class EtcdSampleRepository implements SampleRepository {
 		if (!basePath.endsWith("/")) {
 			basePath = basePath + "/";
 		}
+		if (System.getenv(CONFCHANNEL_ENV) != null) {
+			basePath = System.getenv(CONFCHANNEL_ENV) + basePath;
+		}
+
 		this.basePath = basePath;
 	}
 	

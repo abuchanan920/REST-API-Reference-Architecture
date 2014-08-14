@@ -12,7 +12,8 @@ import com.hibu.etcd.EtcdConfiguration;
  *
  */
 public class SampleConfiguration extends EtcdConfiguration {
-	private static final String BASE_PATH = "/restreference";
+	private static final String CONFCHANNEL_ENV = "CONFCHANNEL";
+	private static final String BASE_PATH = "/config/restreference";
 	private static final String SETTING_SAMPLE_CONFIG = "sampleConfigSetting";
 	private static final String SETTING_SWAGGER_BASE_PATH = "swaggerBasePath";
 	private static final String SETTING_SAMPLE_REPOSITORY = "sampleRepository";
@@ -25,7 +26,8 @@ public class SampleConfiguration extends EtcdConfiguration {
 	private String sampleRepository;
 	
 	public SampleConfiguration() {
-		super(BASE_PATH);
+		super(System.getenv(CONFCHANNEL_ENV) != null ?
+				System.getenv(CONFCHANNEL_ENV) + BASE_PATH : BASE_PATH);
 	}
 
 	@JsonProperty
