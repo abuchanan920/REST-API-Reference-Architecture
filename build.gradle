@@ -145,14 +145,14 @@ deployDocker.mustRunAfter distDocker
 task tagDocker(type:Exec) {
     description 'Tags the Docker image'
     commandLine 'docker'
-    args 'tag', dockerTag, '172.17.8.100:5000/' + dockerTag
+    args 'tag', dockerTag, "${System.env.DOCKER_REGISTRY}/" + dockerTag
 }
 tagDocker.mustRunAfter deployDocker
 
 task pushDocker(type:Exec) {
     description 'Pushes the Docker image to the private registry'
     commandLine 'docker'
-    args 'push', '172.17.8.100:5000/' + dockerTag
+    args 'push', "${System.env.DOCKER_REGISTRY}/" + dockerTag
 }
 pushDocker.mustRunAfter tagDocker
 

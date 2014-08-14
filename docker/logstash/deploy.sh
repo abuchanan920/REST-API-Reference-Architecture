@@ -5,5 +5,5 @@ if [ ! -f certs/logstash-forwarder.crt ]; then
 	popd
 fi
 docker build -t hibu/logstash .
-docker tag hibu/logstash 172.17.8.100:5000/hibu/logstash
-docker push 172.17.8.100:5000/hibu/logstash
+docker tag hibu/logstash $DOCKER_REGISTRY/hibu/logstash
+docker push $DOCKER_REGISTRY/hibu/logstash
