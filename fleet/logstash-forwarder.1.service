@@ -1,9 +1,0 @@
-[Unit]
-Description=logstash forwarder
-
-[Service]
-ExecStart=/usr/bin/docker run --name logstash-forwarder --rm=true --volume=/var/lib/docker:/var/lib/docker:ro --volume=/var/run/docker.sock:/var/run/docker.sock 172.17.8.100:5000/hibu/logstash-forwarder
-
-[X-Fleet]
-X-ConditionMachineMetadata=server=core-01
-X-Conflicts=logstash-forwarder.*.service
