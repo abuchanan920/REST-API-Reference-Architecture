@@ -17,6 +17,8 @@ A small POC application demonstrating the integration of a number of technologie
 ## Operations
 
 * [Metrics](http://metrics.codahale.com/) - provides easy to generate statistics on API performance and usage.
+* [Logstash](http://logstash.net) - tool for managing events and logs
+* [Kibana](http://www.elasticsearch.org/overview/kibana/) - web interface for real-time analyis of log data
 
 ## Documentation
 
@@ -39,20 +41,6 @@ On a Mac, you can most easily install gradle using [brew](http://brew.sh/): `bre
 
 ## Quick Start
 
-### Local
-`gradle start` will build a single, self-contained, executable jar file that contains all of the app dependencies and put in in the ./build/libs directory and run it.
-
-You can run it manually with `java -jar build/libs/rest-reference-1.0-SNAPSHOT.jar server src/main/resources/sample-config.yml`
-after compiling with `gradle fatJar` if you prefer.
-
-The API endpoint will be available at [http://localhost:8080](http://localhost:8080).
-
-A console with access to the performance metrics, health checks, and thread dumps is at [http://localhost:8081](http://localhost:8081).
-
-The API docs will be available at [http://localhost:8080/docs/](http://localhost:8080/docs/).
-
-A computer consumable version of the docs are at [http://localhost:8080/api-docs](http://localhost:8080/api-docs).
-
 ### Docker container
 
 #### Prerequisites
@@ -60,7 +48,7 @@ A computer consumable version of the docs are at [http://localhost:8080/api-docs
 ##### Docker
 On a Mac, you can install using [brew](http://brew.sh/) via `brew install docker`.
 
-NOTE: As of this writing (7/15/2014), you will need the 1.0.1 version of docker on your laptop. Newer versions (1.1.0+) cannot talk to the version of Docker on the CoreOS virtual machines. You can do a `cd $(brew --prefix );git checkout 7666e02 Library/Formula/docker.rb;brew install docker` and a `brew switch docker 1.0.1` to configure your machine to use the correct version. This should cease to be a problem with an upcoming CoreOS release.
+NOTE: As of this writing (8/20/2014), you will need the 1.0.1 version of docker on your laptop. Newer versions (1.1.0+) cannot talk to the version of Docker on the CoreOS virtual machines. You can do a `cd $(brew --prefix );git checkout 7666e02 Library/Formula/docker.rb;brew install docker` and a `brew switch docker 1.0.1` to configure your machine to use the correct version. This should cease to be a problem with an upcoming CoreOS release.
 
 This will install the client tools. Since Docker runs on top of Linux containers, you will be remotely controlling a Linux system. To set up your connection to where the server will be, you will then need to add `export DOCKER_HOST=172.17.8.100:4243` to your login profile (.zprofile or equivalent).
 
@@ -76,57 +64,58 @@ This is a system that sits on top of VirtualBox to easily manage development env
 
 You can install from [http://www.vagrantup.com/](http://www.vagrantup.com/), or if your are on a Mac and have [brew cask](http://caskroom.io/) installed, you can simply `brew cask install vagrant`.
 
-##### CoreOS Utilities
-Some other tools you will find handy on a Mac are etcdctl and fleetctl. These will allow you to interact with the CoreOS infrastructure directly from your desktop. You can install these on a Mac with brew with `brew install etcdctl` and `brew install fleetctl`. You will also want to add `export FLEETCTL_ENDPOINT=http://172.17.8.101:4001` to your login profile (.zprofile or equivalent).
-
 ##### Hosts File
 Some of these services will need to be able to speak to each other by name. I spent some time trying to get Vagrant to fake this out to avoid editing the hosts file, but to no avail. You will want to add the following to your /etc/hosts file (or equivalent):
 
 ````
-172.17.8.101 core-01 rest
+172.17.8.101 core-01 rest logstash
 172.17.8.102 core-02
 172.17.8.103 core-03
 ````
 
 #### Starting the Cluster
-`gradle startCoreOS` will start a cluster of 4 machines using Vagrant. One machine is just to host a private Docker registry. The other 3 will run as a cluster with etcd and fleetd.
+First, run `. ./setenv.sh` to configure the paths and environment variables for the demo.
 
-`gradle deployHAProxy` will create a Docker image for the load balancer, push it to the private registry, and set up some etcd configuration we will use later. This only needs to be done once.
+Then, `gradle startDemo` will execute everything to get your cluster up and running. This will take a while (perhaps as long as 30 mins depending on download speeds, etc.).
 
-#### Running
+It will:
 
-`gradle distDocker deployDocker` will compile the code, start a CoreOS virtual machine, create and deploy a Docker image of the application.
+1. Start a cluster of 4 machines using Vagrant. One machine is just to host a private Docker registry. The other 3 will run as a cluster with etcd and fleetd.
+2. Build and deploy an HAProxy container to the cluster. 
+3. Build and deploy Logstash and Logstash-Forwarder containers to the cluster.
+4. Build and deploy containers of the REST API example app.
 
-NOTE: The first time you run this may take a long time at "Pulling repository dockerfile/java". This is due to a slow upstream server, but fortunately is a one-time operation.
-
-`gradle startDocker` will start a new container based on the deployed Docker image on the CoreOS virtual machine.
-
-The API endpoint will be available at [http://172.17.8.101:8080](http://172.17.8.101:8080).
-
-The console will be available at [http://172.17.8.101:8081](http://172.17.8.101:8081).
-
-The API docs will be available at [http://172.17.8.101:8080/docs/](http://172.17.8.101:8080/docs/).
-
-A computer consumable version of the docs are at [http://172.17.8.101:8080/api-docs](http://172.17.8.101:8080/api-docs).
-
-#### Running Cluster
-`gradle distDocker deployDocker tagDocker pushDocker` will compile the code, create a Docker container of the app, tag it, and push it to the private registry that is running on one of the virtual machines (in a docker container of course).
-
-`gradle initFleet` will upload the cluster configs in the fleet directory to the cluster to define which services to run.
-
-`gradle startFleet` will upload the cluster configs in the fleet directory to the cluster to define which services to run start them.
-
-After a minute or so for the various machines to download the image from the private registry, they services will activate on the servers. You can see what is running where by running `fleetctl list-units`.
 
 The API endpoint will be available at [https://rest](https://rest).
 
 The API docs will be available at [https://rest/docs/](https://rest/docs/).
 
-A computer consumable version of the docs are at [https://rest/api-docs](https://rest/api-docs).
+A computer consumable version of the docs are at [http://rest/api-docs](http://rest/api-docs).
 
 The individual consoles will be available at [http://172.17.8.101:8081](http://172.17.8.101:8081). Note that you will need to use a valid IP address depending on what cores the app is running on. See `fleetctl list-units` to tell.
 
+The Kibana console will be available at [http://logstash:9292](http://logstash:9292)
+
 The load balancer status will be available at [http://rest:8080/stats](http://rest:8080/stats). The username is "username" and the password is "password"
+
+#### Shutting the Cluster down
+Run `gradle stopCoreOS` to stop the cluster. You can restart again with `gradle startCoreOS`. 
+
+If you want to completely destroy the cluster, run `gradle destroyCoreOS`.
+
+### Running Local Standalone (for debugging, etc.)
+`gradle start` will build a single, self-contained, executable jar file that contains all of the app dependencies and put in in the ./build/libs directory and run it.
+
+You can run it manually with `java -jar build/libs/rest-reference-1.0-SNAPSHOT.jar server src/main/resources/sample-config.yml`
+after compiling with `gradle fatJar` if you prefer.
+
+The API endpoint will be available at [http://localhost:8080](http://localhost:8080).
+
+A console with access to the performance metrics, health checks, and thread dumps is at [http://localhost:8081](http://localhost:8081).
+
+The API docs will be available at [http://localhost:8080/docs/](http://localhost:8080/docs/).
+
+A computer consumable version of the docs are at [http://localhost:8080/api-docs](http://localhost:8080/api-docs).
 
 # Things to See
 
@@ -138,7 +127,7 @@ The load balancer is watching the healthcheck page to make sure a node is health
 
 Go to the load balancer console at [http://rest:8080/stats](http://rest:8080/stats) and note the bottom where it should show 2 nodes in a green/active state.
 
-The application has a simple health check that says "if I have more than 3 items inserted, I am too full". 
+The application has a simple health check that says "if I have processed the insert of more than 3 items, I am now broken". 
  
 To test this, go to the [https://rest/docs/](https://rest/docs/) page and POST 7 values into the system using the API. The load balancer will distribute them across the 2 nodes, causing one of them to become overfull. 
 
@@ -177,6 +166,19 @@ Note that this config change is persistent. If you shut down the CoreOS virtual 
 
 The implementation provided will cache configuration information within the app process for performance and place watches on etcd to pick up changes automatically. The user should always use the value from the Configuration object when needed to be sure they are using the latest value. The user would need to check to make sure any persistent objects are still valid when used (e.g. a database connection), or a callback function could be added to the Configuration object to notify the app immediately that it should re-open a database connection (for example).
 
+## Look at Logs
+Go to the Kibana Logstash console at [http://logstash:9292/index.html#/dashboard/file/logstash.json](http://logstash:9292/index.html#/dashboard/file/logstash.json).
+
+You should see a lot of log activity, mostly calls to the healthcheck page.
+
+You can try searching and filtering the logs by entering something like `!healthcheck` into the query box at the top of the screen.
+
+You can experiment with searching and filtering the logs from here.
+
+**Note that the Logstash-Forwarders weren't specifically configured with any knowledge of the containers they are processing. This is all done by runtime inspection. Any new containers that start will also have their logs detected and forwarded.** 
+
+**Additionally, the application containers themselves have no knowledge that their logs are being consolidated. It is transparent to the application itself.**
+
 ## Extended docs
 
 * `gradle tasks` will list the various tasks you can run with gradle. Some highlights below.
@@ -187,16 +189,22 @@ The implementation provided will cache configuration information within the app 
 * `gradle eclipse` will generate the project files for Eclipse
 * `gradle farJar` will build a single, self-contained, executable jar file that contains all of the app dependencies and put in in the ./build/libs directory.
 * `gradle start` will run the app locally from the FatJar using the sample-config.yml settings.
+* `gradle compileEtcdCtl` will build the local copy of the etcdctl utility
+* `gradle compileFleetCtl` will build the local copy of the fleetctl utility
 * `gradle startCoreOS` will start the CoreOS virtual servers using VirtualBox
 * `gradle stopCoreOS` will stop the CoreOS virtual servers
 * `gradle destroyCoreOS` will top the CoreOS virtual servers and delete them
+* `gradle distDocker` will build the Dockerfile and inputs for creating a Docker container of the application
 * `gradle deployDocker` will create a Docker image of the application and upload it to CoreOS.
 * `gradle tagDocker` will tag the Docker image of the application with the application name label so it can be referred to by name rather than ID.
 * `gradle pushDocker` will push the tagged Docker image to the private registry
-* `gradle deployHAProxy` will create a load balancer Docker image and push it to the private registry. It will also set up the etcd configurations for the load balancer demo.
+* `gradle deployHAProxy` will create a load balancer Docker image and push it to the private registry.
+* `gradle deployLogstash` will create a Logstash Docker image and push it to the private repository.
+* `gradle deployLogstashForwarder` will create a Logstash-Forwarder Docker image and push it to the private repository.
 * `gradle initFleet` will upload the cluster configuration units to the CoreOS cluster
 * `gradle uninitFleet` will delete the cluster configuration units from the CoreOS cluster
 * `gradle startFleet` will start the configured configuration units to form a clustered version of the app in the CoreOS cluster
 * `gradle stopFleet` will stop the clustered version of the app
 * `gradle updateDockerImages` will make every core pull the latest version of any installed images from the private registry.
 * `gradle reapStaleDockerContainers` a utility task to clear out any Docker containers in the cluster that have exited, but have not been removed.
+* `gradle startDemo` will configure and start the cluster, as well as build, push, configure, and start all of the needed Docker containers.
