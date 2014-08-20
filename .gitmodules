@@ -13,9 +13,6 @@
 [submodule "vendor/docker-haproxy-etcd"]
 	path = vendor/docker-haproxy-etcd
 	url = https://github.com/redguava/docker-haproxy-etcd.git
-[submodule "vendor/private-docker-registry"]
-	path = vendor/private-docker-registry
-	url = https://github.com/hopsoft/private-docker-registry
 [submodule "vendor/logstash-dockerfile"]
 	path = vendor/logstash-dockerfile
 	url = https://github.com/denibertovic/logstash-dockerfile.git

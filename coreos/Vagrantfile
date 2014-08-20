@@ -33,8 +33,8 @@ Vagrant.configure("2") do |config|
     dockerreg.vm.provision :shell, :inline => "mv /tmp/vagrantfile-user-data /var/lib/coreos-vagrant/", :privileged => true
 
     dockerreg.vm.provision "docker" do |d|
-      d.build_image "/shared", args: "-t hibu/docker-registry"
-      d.run "hibu/docker-registry", args: "-p 5000:5000"
+      d.pull_images "registry"
+      d.run "registry", args: "-p 5000:5000 -e STORAGE_PATH=/registry -e GUNICORN_WORKERS=10"
     end
 
     dockerreg.vm.provider :virtualbox do |vb|
