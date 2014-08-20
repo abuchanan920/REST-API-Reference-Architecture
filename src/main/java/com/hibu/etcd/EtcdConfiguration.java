@@ -4,6 +4,8 @@ import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.log4j.Logger;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -14,6 +16,8 @@ import com.justinsb.etcd.EtcdResult;
 import io.dropwizard.Configuration;
 
 public class EtcdConfiguration extends Configuration {
+	private static final Logger logger = (Logger) Logger.getInstance(EtcdConfiguration.class);
+
 	private static final String ETCD_SERVICE_URL = "http://10.1.42.1:4001/"; // Where the service is exposed to docker containers
 	
 	private final String basePath;
@@ -41,10 +45,10 @@ public class EtcdConfiguration extends Configuration {
 		}
 		
 		if (result != null && !result.isError()) {
-			cachedValues.put(key, result.value);
+			cachedValues.put(key, result.node.value);
 			addWatchSettingForChange(key, result);
 			
-			return result.value;
+			return result.node.value;
 		} else {
 			// Don't cache an error condition
 			return null;
@@ -52,21 +56,25 @@ public class EtcdConfiguration extends Configuration {
 	}
 		
 	private void addWatchSettingForChange(final String key, final EtcdResult result) {
-		ListenableFuture<EtcdResult> watchFuture = this.client.watch(basePath + key, result.index + 1);
-		Futures.addCallback(watchFuture, new FutureCallback<EtcdResult>() {
-			@Override
-			public void onSuccess(EtcdResult result) {
-				if (result != null && !result.isError()) {
-					cachedValues.put(key, result.value);
-					addWatchSettingForChange(key, result);
+		try {
+			ListenableFuture<EtcdResult> watchFuture = this.client.watch(basePath + key, result.node.modifiedIndex + 1, true);
+			Futures.addCallback(watchFuture, new FutureCallback<EtcdResult>() {
+				@Override
+				public void onSuccess(EtcdResult result) {
+					if (result != null && !result.isError()) {
+						cachedValues.put(key, result.node.value);
+						addWatchSettingForChange(key, result);
+					}
 				}
-			}
 
-			@Override
-			public void onFailure(Throwable t) {
-				addWatchSettingForChange(key, result);
-			}				
-		});	
+				@Override
+				public void onFailure(Throwable t) {
+					addWatchSettingForChange(key, result);
+				}				
+			});
+		} catch (EtcdClientException e) {
+			logger.error(e);
+		}	
 	}
 	
 }

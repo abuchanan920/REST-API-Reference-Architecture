@@ -1,0 +1,8 @@
+[Unit]
+Description=logstash
+
+[Service]
+ExecStart=/usr/bin/docker run --publish=5043:5043 --publish=514:514 --publish=9200:9200 --publish=9292:9292 --publish=9300:9300 --rm=true <DOCKER-REGISTRY>/hibu/logstash
+
+[X-Fleet]
+X-ConditionMachineMetadata=server=core-0<UNIT-ID>

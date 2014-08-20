@@ -10,6 +10,10 @@ public class SampleRepositoryException extends Exception {
 	
 	private static final long serialVersionUID = 5427800629889466064L;
 	
+	public SampleRepositoryException(Exception e) {
+		super(e);
+	}
+	
 	public SampleRepositoryException(String msg) {
 		super(msg);
 	}

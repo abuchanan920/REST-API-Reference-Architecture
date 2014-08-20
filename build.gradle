@@ -24,7 +24,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'se.transmode.gradle:gradle-docker:1.1'
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
         classpath 'eu.appsatori:gradle-fatjar-plugin:0.2'    
     }
 }
@@ -44,14 +44,14 @@ dependencies {
     compile "io.dropwizard:dropwizard-core:0.7.0"
     compile "io.dropwizard:dropwizard-assets:0.7.0"
     compile "com.wordnik:swagger-jaxrs_2.10:1.3.4"
-    compile "com.github.mlaccetti:etcd-client:0.1.1"
+    compile "org.apache.httpcomponents:httpasyncclient:4.0.1"
+    compile "com.google.code.gson:gson:2.2.4"
 }
 
 // Configure docker settings
 docker {
     maintainer dockerMaintainer
 }
-
 
 // TASKS
 
@@ -82,12 +82,6 @@ task start(type:Exec,dependsOn:'fatJar') {
 	args '-jar', 'build/libs/' + archivesBaseName + '-' + version + '.jar', 'server', 'src/dist/main/sample-config.yml'
 }
 
-// Builds docker config Dockerfile. On Linux it will also generate the final docker image.
-distDocker {
-    exposePort 8080
-    exposePort 8081
-}
-
 task configCoreOS(type:Exec) {
     ext.templateFile = file('coreos/user-data.template')
     ext.configFile = file('coreos/user-data.01')
@@ -98,16 +92,16 @@ task configCoreOS(type:Exec) {
     commandLine 'coreos/config-user-data.sh'
 }
 
-task startCoreOS(type:Exec,dependsOn:'configCoreOS') {
-	description 'Starts the CoreOS Server'
-	commandLine 'coreos/start.sh'
+task startCoreOS(type:Exec,dependsOn:['configCoreOS','compileEtcdCtl','compileFleetCtl']) {
+    description 'Starts the CoreOS Server'
+    commandLine 'coreos/start.sh'
 }
 
 task stopCoreOS(type:Exec) {
-	description 'Stops the CoreOS Server'
-	workingDir 'coreos'
-	commandLine 'vagrant'
-	args 'halt'
+    description 'Stops the CoreOS Server'
+    workingDir 'coreos'
+    commandLine 'vagrant'
+    args 'halt'
 }
 
 task destroyCoreOS(type:Exec) {
@@ -116,30 +110,72 @@ task destroyCoreOS(type:Exec) {
     commandLine './destroy.sh'
 }
 
+// Builds docker config Dockerfile. On Linux it will also generate the final docker image.
+distDocker {
+    exposePort 8080
+    exposePort 8081
+    tag dockerTag
+}
+distDocker.mustRunAfter startCoreOS
+
+task compileEtcdCtl(type:Exec) {
+    outputs.file(file('vendor/etcdctl/bin/etcdctl'))
+
+    description 'Compiles etcdctl'
+    workingDir 'vendor/etcdctl'
+    commandLine './build'
+}
+
+task compileFleetCtl(type:Exec) {
+    outputs.file(file('vendor/fleet/bin/fleetctl'))
+
+    description 'Compiles fleetctl'
+    workingDir 'vendor/fleet'
+    commandLine './build'
+}
+
 task deployDocker(type:Exec) {
 	description 'Generates the Docker image'
 	workingDir 'build/docker'
 	commandLine 'docker'
 	args 'build', '-t', dockerTag, '.'
 }
+deployDocker.mustRunAfter distDocker
 
 task tagDocker(type:Exec) {
     description 'Tags the Docker image'
     commandLine 'docker'
-    args 'tag', dockerTag, '172.17.8.100:5000/' + dockerTag
+    args 'tag', dockerTag, "${System.env.DOCKER_REGISTRY}/" + dockerTag
 }
+tagDocker.mustRunAfter deployDocker
 
 task pushDocker(type:Exec) {
     description 'Pushes the Docker image to the private registry'
     commandLine 'docker'
-    args 'push', '172.17.8.100:5000/' + dockerTag
+    args 'push', "${System.env.DOCKER_REGISTRY}/" + dockerTag
 }
+pushDocker.mustRunAfter tagDocker
 
 task deployHAProxy(type:Exec) {
     description 'Builds and deploys the HAProxy container'
-    workingDir 'docker-haproxy-etcd'
+    workingDir 'docker/docker-haproxy-etcd'
     commandLine './deploy.sh'
 }
+deployHAProxy.mustRunAfter startCoreOS
+
+task deployLogstash(type:Exec) {
+    description 'Builds and deploys the Logstash container'
+    workingDir 'docker/logstash'
+    commandLine './deploy.sh'
+}
+deployLogstash.mustRunAfter startCoreOS
+
+task deployLogstashForwarder(type:Exec) {
+    description 'Builds and deploys the Logstash forwarder container'
+    workingDir 'docker/logstash-forwarder'
+    commandLine './deploy.sh'
+}
+deployLogstashForwarder.mustRunAfter startCoreOS
 
 task updateDockerImages(type:Exec) {
     description 'Have each core pull the latest versions of the images'
@@ -174,4 +210,8 @@ task stopFleet(type:Exec) {
     description 'Stops the full cluster of docker containers'
     workingDir 'fleet'
     commandLine './stop.sh'
+}
+
+task startDemo(dependsOn:['startCoreOS','deployHAProxy','deployLogstash','deployLogstashForwarder','distDocker','deployDocker','tagDocker','pushDocker']) << {
+    startFleet.execute()
 }
