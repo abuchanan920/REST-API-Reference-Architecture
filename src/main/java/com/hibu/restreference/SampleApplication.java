@@ -7,7 +7,6 @@ import io.dropwizard.setup.Environment;
 import com.hibu.etcd.ConfigurationServlet;
 import com.hibu.restreference.health.SampleObjectPoolHealthCheck;
 import com.hibu.restreference.repository.SampleRepository;
-import com.hibu.restreference.repository.memory.MemorySampleRepository;
 import com.hibu.restreference.resources.SampleResource;
 import com.hibu.swagger.SwaggerBundle;
 
@@ -21,7 +20,7 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	public static final String API_VERSION = "1.0.0";
 	
 	// NOTE: Should use your dependency injection framework of choice here
-	private final SampleRepository repository = new MemorySampleRepository(); 
+	private SampleRepository repository; 
 	
 	SwaggerBundle swaggerBundle = new SwaggerBundle(API_VERSION);
 
@@ -44,6 +43,9 @@ public class SampleApplication extends Application<SampleConfiguration> {
 	@Override
 	public void run(SampleConfiguration configuration,
 			Environment environment) throws Exception {
+		
+		repository = (SampleRepository) Class.forName(configuration.getSampleRepository()).newInstance();
+		
 		// Wire up the SampleResource
 		final SampleResource sampleResource = new SampleResource(repository);
 		environment.jersey().register(sampleResource);
@@ -57,7 +59,6 @@ public class SampleApplication extends Application<SampleConfiguration> {
 		
 		// Configure swagger
 		swaggerBundle.configureBasePath(configuration.getSwaggerBasePath());
-
 	}
 
 }

@@ -22,8 +22,8 @@ public class SampleObjectPoolHealthCheck extends HealthCheck {
 	@Override
 	protected Result check() throws Exception {
 		// Pretend we can only store 3 objects and more is an unhealthy condition
-		if (repository.getSampleObjectCount() > 3) {
-			return Result.unhealthy("More than the max (3) number of objects stored!");
+		if (repository.getAddSampleCount() > 3) {
+			return Result.unhealthy("More than the max (3) number of objects stored by this process!");
 		}
 		return Result.healthy();
 	}

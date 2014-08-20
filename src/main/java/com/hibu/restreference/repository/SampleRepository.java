@@ -25,4 +25,6 @@ public interface SampleRepository {
 	public void updateSampleObject(SampleObjectBean sampleObject) throws SampleRepositoryException;
 
 	public void deleteSampleObject(UUID id) throws SampleRepositoryException;
+	
+	public int getAddSampleCount();
 }

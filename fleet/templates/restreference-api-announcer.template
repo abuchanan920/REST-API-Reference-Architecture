@@ -1,0 +1,10 @@
+[Unit]
+Description=restreference-api announcer
+BindsTo=restreference-api.<UNIT-ID>.service
+
+[Service]
+ExecStart=/bin/sh -c "while true; do etcdctl set <CONFCHANNEL>/services/restreference-api/api<UNIT-ID> '{ \"host\": \"%H\", \"port\": 18080, \"version\": \"1.0-SNAPSHOT\" }' --ttl 60;sleep 45;done"
+ExecStop=/usr/bin/etcdctl rm <CONFCHANNEL>/services/restreference-api/api<UNIT-ID>
+
+[X-Fleet]
+X-ConditionMachineOf=restreference-api.<UNIT-ID>.service

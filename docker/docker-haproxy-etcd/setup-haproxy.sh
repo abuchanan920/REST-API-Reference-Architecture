@@ -1,0 +1,54 @@
+#!/bin/bash
+
+HAPROXY_CONFIG_TEMPLATE=/etc/haproxy/haproxy.cfg.template
+HAPROXY_CONFIG=/etc/haproxy/haproxy.cfg
+ETCDCTL_PEER="10.1.42.1:4001"
+
+HAPROXY_GLOBAL_MAX_CONNECTIONS=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_GLOBAL_MAX_CONNECTIONS | grep -v "Error: 100: Key not found" || echo "2000")
+HAPROXY_DEFAULTS_MAX_CONNECTIONS=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_MAX_CONNECTIONS | grep -v "Error: 100: Key not found" || echo "1000")
+HAPROXY_DEFAULTS_RETRIES=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_RETRIES | grep -v "Error: 100: Key not found" || echo "3")
+HAPROXY_DEFAULTS_TIMEOUT_HTTP_REQUEST=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_HTTP_REQUEST | grep -v "Error: 100: Key not found" || echo "10s")
+HAPROXY_DEFAULTS_TIMEOUT_CLIENT=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_CLIENT | grep -v "Error: 100: Key not found" || echo "1m")
+HAPROXY_DEFAULTS_TIMEOUT_CONNECT=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_CONNECT | grep -v "Error: 100: Key not found" || echo "10s")
+HAPROXY_DEFAULTS_TIMEOUT_SERVER=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_SERVER | grep -v "Error: 100: Key not found" || echo "1m")
+HAPROXY_DEFAULTS_TIMEOUT_QUEUE=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_QUEUE | grep -v "Error: 100: Key not found" || echo "1m")
+HAPROXY_DEFAULTS_TIMEOUT_HTTP_KEEP_ALIVE=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_HTTP_KEEP_ALIVE | grep -v "Error: 100: Key not found" || echo "10s")
+HAPROXY_DEFAULTS_OPTION_HTTPCHK=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_OPTION_HTTPCHK | grep -v "Error: 100: Key not found" || echo "\/healthcheck")
+HAPROXY_DEFAULTS_TIMEOUT_CHECK=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_TIMEOUT_CHECK | grep -v "Error: 100: Key not found" || echo "5s")
+HAPROXY_DEFAULTS_SPREAD_CHECKS=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_SPREAD_CHECKS | grep -v "Error: 100: Key not found" || echo "5")
+HAPROXY_DEFAULTS_MONITOR_URI=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_DEFAULTS_MONITOR_URI | grep -v "Error: 100: Key not found" || echo "\/monitor")
+HAPROXY_STATS_PORT=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_PORT | grep -v "Error: 100: Key not found" || echo "8080")
+HAPROXY_STATS_ENABLE=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_ENABLE | grep -v "Error: 100: Key not found" || echo "enable")
+HAPROXY_STATS_URI=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_URI | grep -v "Error: 100: Key not found" || echo "\/stats")
+HAPROXY_STATS_REALM=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_REALM | grep -v "Error: 100: Key not found" || echo "Statistics")
+HAPROXY_STATS_USERNAME=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_USERNAME | grep -v "Error: 100: Key not found" || echo "username")
+HAPROXY_STATS_PASSWORD=$(etcdctl --peers ${ETCDCTL_PEER} get ${HAPROXY_ETCD_CONFIG:-"/config"}/HAPROXY_STATS_PASSWORD | grep -v "Error: 100: Key not found" || echo "password")
+
+cp $HAPROXY_CONFIG_TEMPLATE $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_GLOBAL_MAX_CONNECTIONS/${HAPROXY_GLOBAL_MAX_CONNECTIONS}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_MAX_CONNECTIONS/${HAPROXY_DEFAULTS_MAX_CONNECTIONS}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_RETRIES/${HAPROXY_DEFAULTS_RETRIES}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_HTTP_REQUEST/${HAPROXY_DEFAULTS_TIMEOUT_HTTP_REQUEST}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_CLIENT/${HAPROXY_DEFAULTS_TIMEOUT_CLIENT}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_CONNECT/${HAPROXY_DEFAULTS_TIMEOUT_CONNECT}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_SERVER/${HAPROXY_DEFAULTS_TIMEOUT_SERVER}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_QUEUE/${HAPROXY_DEFAULTS_TIMEOUT_QUEUE}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_HTTP_KEEP_ALIVE/${HAPROXY_DEFAULTS_TIMEOUT_HTTP_KEEP_ALIVE}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_OPTION_HTTPCHK/${HAPROXY_DEFAULTS_OPTION_HTTPCHK}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_TIMEOUT_CHECK/${HAPROXY_DEFAULTS_TIMEOUT_CHECK}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_SPREAD_CHECKS/${HAPROXY_DEFAULTS_SPREAD_CHECKS}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_DEFAULTS_MONITOR_URI/${HAPROXY_DEFAULTS_MONITOR_URI}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_PORT/${HAPROXY_STATS_PORT}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_ENABLE/${HAPROXY_STATS_ENABLE}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_URI/${HAPROXY_STATS_URI}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_REALM/${HAPROXY_STATS_REALM}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_USERNAME/${HAPROXY_STATS_USERNAME}/g" $HAPROXY_CONFIG
+sed -i -e "s/HAPROXY_STATS_PASSWORD/${HAPROXY_STATS_PASSWORD}/g" $HAPROXY_CONFIG
+
+/usr/local/sbin/haproxy -c -q -f /etc/haproxy/haproxy.cfg
+if [ $? -ne 0 ]; then
+        echo "Errors in configuration file, check with $prog check."
+        exit 1
+fi
+
+exec /usr/local/sbin/haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)
