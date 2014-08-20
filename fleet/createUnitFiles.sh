@@ -20,5 +20,5 @@ function processTemplate {
 processTemplate logstash 1
 processTemplate logstash-forwarder 3
 processTemplate restreference-api 2
-processTemplate restreference-api-discovery 2
+processTemplate restreference-api-announcer 2
 processTemplate restreference-api-loadbalancer 1

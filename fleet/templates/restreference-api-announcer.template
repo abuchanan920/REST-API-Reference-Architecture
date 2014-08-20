@@ -1,5 +1,5 @@
 [Unit]
-Description=Announce restreference-api
+Description=restreference-api announcer
 BindsTo=restreference-api.<UNIT-ID>.service
 
 [Service]

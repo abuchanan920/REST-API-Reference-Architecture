@@ -1,5 +1,5 @@
 [Unit]
-Description=logstash forwarder <UNIT-ID>
+Description=logstash forwarder
 
 [Service]
 ExecStart=/usr/bin/docker run --name logstash-forwarder --rm=true --volume=/var/lib/docker:/var/lib/docker:ro --volume=/var/run/docker.sock:/var/run/docker.sock <DOCKER-REGISTRY>/hibu/logstash-forwarder
