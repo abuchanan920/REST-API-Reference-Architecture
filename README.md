@@ -35,17 +35,19 @@ A small POC application demonstrating the integration of a number of technologie
 
 ## Requirements
 
-User must have Java (7+) installed as well as [Gradle](http://www.gradle.org/).
+### Java
+User must have Java (7+) installed.
 
-On a Mac, you can most easily install gradle using [brew](http://brew.sh/): `brew install gradle`
+### Go
 
-## Quick Start
+User needs to have the Go language installed. On a Mac, you can install using [brew](http://brew.sh/) via `brew install go`.
 
-### Docker container
+### Gradle
 
-#### Prerequisites
+On a Mac, you can most easily install [Gradle](http://www.gradle.org/) using [brew](http://brew.sh/): `brew install gradle`
 
-##### Docker
+### Docker
+
 On a Mac, you can install using [brew](http://brew.sh/) via `brew install docker`.
 
 NOTE: As of this writing (8/20/2014), you will need the 1.0.1 version of docker on your laptop. Newer versions (1.1.0+) cannot talk to the version of Docker on the CoreOS virtual machines. You can do a `cd $(brew --prefix );git checkout 7666e02 Library/Formula/docker.rb;brew install docker` and a `brew switch docker 1.0.1` to configure your machine to use the correct version. This should cease to be a problem with an upcoming CoreOS release.
@@ -54,17 +56,17 @@ This will install the client tools. Since Docker runs on top of Linux containers
 
 Instructions for other platforms are available at [http://docs.docker.io/introduction/get-docker/](http://docs.docker.io/introduction/get-docker/).
 
-##### VirtualBox
+#### VirtualBox
 This is the virtualization system we will run our CoreOS server within for this demo.
 
 You can install from [https://www.virtualbox.org/](https://www.virtualbox.org/), or if you on a Mac and have [brew cask](http://caskroom.io/) installed, you can simply `brew cask install virtualbox`. If you already have brew, installing brew cask is simply `brew install caskroom/cask/brew-cask`.
 
-##### Vagrant
+#### Vagrant
 This is a system that sits on top of VirtualBox to easily manage development environments.
 
 You can install from [http://www.vagrantup.com/](http://www.vagrantup.com/), or if your are on a Mac and have [brew cask](http://caskroom.io/) installed, you can simply `brew cask install vagrant`.
 
-##### Hosts File
+#### Hosts File
 Some of these services will need to be able to speak to each other by name. I spent some time trying to get Vagrant to fake this out to avoid editing the hosts file, but to no avail. You will want to add the following to your /etc/hosts file (or equivalent):
 
 ````
@@ -73,7 +75,8 @@ Some of these services will need to be able to speak to each other by name. I sp
 172.17.8.103 core-03
 ````
 
-#### Starting the Cluster
+## Quick Start
+### Starting the Cluster
 First, run `. ./setenv.sh` to configure the paths and environment variables for the demo.
 
 Then, `gradle startDemo` will execute everything to get your cluster up and running. This will take a while (perhaps as long as 30 mins depending on download speeds, etc.).
@@ -98,7 +101,7 @@ The Kibana console will be available at [http://logstash:9292](http://logstash:9
 
 The load balancer status will be available at [http://rest:8080/stats](http://rest:8080/stats). The username is "username" and the password is "password"
 
-#### Shutting the Cluster down
+### Shutting the Cluster down
 Run `gradle stopCoreOS` to stop the cluster. You can restart again with `gradle startCoreOS`. 
 
 If you want to completely destroy the cluster, run `gradle destroyCoreOS`.
